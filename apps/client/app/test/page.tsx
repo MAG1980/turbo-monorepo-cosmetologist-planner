@@ -1,16 +1,11 @@
-'use client';
-import { useEffect, useState } from 'react';
+import { ServerSide } from '../components/ServerSide'
+import { ClientSide } from "@client/app/components/ClientSide";
 
 export default function () {
-  const [data, setData] = useState('initState');
-  useEffect(() => {
-    fetch('/api')
-      .then((res) => res.text())
-      .then((response) => setData(response))
-      .catch((error) => console.log(error));
-
-    return () => {};
-  }, []);
-
-  return <div>{data}</div>;
+  return (
+    <>
+      <ClientSide/>
+      <ServerSide/>
+    </>
+  );
 }
