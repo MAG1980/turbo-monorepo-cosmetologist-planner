@@ -11,9 +11,10 @@
     "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
+    "preserveSymlinks": true,
     "paths": {
       "@server/*": ["./apps/server/src/*"],
-      "@client/*": ["./apps/client/*"]
+      "@client/*": ["./apps/client/*"],
     }
   }
 }
