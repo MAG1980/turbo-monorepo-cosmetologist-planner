@@ -1,6 +1,6 @@
-'use client'
-import { useEffect, useState } from "react";
-import { trpc } from "@client/app/trpc";
+'use client';
+import { useEffect, useState } from 'react';
+import { trpc } from '@client/app/trpc';
 
 export const ClientSide = () => {
   const [data, setData] = useState('initState');
@@ -10,11 +10,11 @@ export const ClientSide = () => {
           .then((response) => setData(response))
           .catch((error) => console.log(error));*/
 
-    trpc.hello.query({ name: 'Client Side' })
-      .then(response => setData(response))
+    trpc.hello
+      .query({ name: 'Client Side' })
+      .then((response) => setData(response));
 
-    return () => {
-    };
+    return () => {};
   }, []);
-  return <h1>Client side requested data:{ data }</h1>
-}
+  return <h1>Client side requested data:{data}</h1>;
+};
