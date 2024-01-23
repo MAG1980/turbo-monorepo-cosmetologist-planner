@@ -1,9 +1,9 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { trpc } from '@client/app/trpc';
+"use client";
+import { useEffect, useState } from "react";
+import { trpc } from "@client/app/trpc";
 
 export const ClientSide = () => {
-  const [data, setData] = useState('initState');
+  const [data, setData] = useState("initState");
   useEffect(() => {
     /*    fetch('/api')
           .then((res) => res.text())
@@ -11,7 +11,7 @@ export const ClientSide = () => {
           .catch((error) => console.log(error));*/
 
     trpc.hello
-      .query({ name: 'Client Side' })
+      .query({ name: "Client Side" })
       .then((response) => setData(response));
 
     return () => {};

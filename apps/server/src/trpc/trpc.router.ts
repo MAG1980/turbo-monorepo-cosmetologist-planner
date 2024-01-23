@@ -12,7 +12,13 @@ export class TrpcRouter {
     hello: this.trpcService.procedure
       //Ограничивает тип полезной нагрузки, получаемой из клиента
       //(метод hello имеет необязательный параметр (объект, содержащий поле name)
-      .input(z.object({ name: z.string() }).optional())
+      .input(
+        z
+          .object({
+            name: z.string(),
+          })
+          .optional(),
+      )
       .query(({ input }) => {
         //В реальных проектах здесь происходит вызов сервиса
         return `Hello, ${input?.name || 'Bilbo'}!`;
@@ -23,7 +29,9 @@ export class TrpcRouter {
     //Внутренние маршруты
     app.use(
       '/trpc',
-      trpcExpress.createExpressMiddleware({ router: this.appRouter }),
+      trpcExpress.createExpressMiddleware({
+        router: this.appRouter,
+      }),
     );
   }
 }

@@ -8,15 +8,15 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts, tsx}": [
-      "turbo format",
-      "turbo lint"
+      "npm run format",
+      "npm run lint"
     ]
   },
   "scripts": {
     "build": "turbo build",
     "dev": "dotenv -- turbo dev",
-    "lint": "turbo lint -- ",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "turbo lint --",
+    "format": "turbo format --",
     "prepare": "husky install",
     "pre-commit": "turbo lint "
   },
