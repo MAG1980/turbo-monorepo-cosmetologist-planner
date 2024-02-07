@@ -5,18 +5,23 @@ import { TrpcModule } from '@server/trpc/trpc.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from '@server/config/dataSource.options';
-import { UserModule } from './user/user.module';
+import { TimeModule } from './time/time.module';
+
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      load:[dataSourceOptions]
+    }),
     TypeOrmModule.forRoot({
-      ...dataSourceOptions,
+      ...dataSourceOptions(),
     }),
     TrpcModule,
-    UserModule,
+    // UserModule,
+    TimeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
+// console.log('dataSourceOptions: ', dataSourceOptions())
