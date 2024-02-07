@@ -1,7 +1,11 @@
 import { DataSourceOptions } from 'typeorm';
-import { config } from "dotenv";
+import { config } from 'dotenv';
 
-config()
+//По умолчанию dotenv ищет файл в корневой папке приложения
+//Расчёт пути к файлу ведётся относительно корневой папки приложения (server)
+config({
+  path: '../../.env',
+});
 export const dataSourceOptions = (): DataSourceOptions => ({
   type: 'cockroachdb',
   host: process.env.DATABASE_HOST,
