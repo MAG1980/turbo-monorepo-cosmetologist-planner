@@ -36,3 +36,8 @@ lerna-debug.log*
 
 # SSL certificate
 CA Cert.MD
+/certs
+/my-safe-directory
+ca.cnf
+index.txt
+serial.txt

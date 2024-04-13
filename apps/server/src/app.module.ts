@@ -5,7 +5,7 @@ import { TrpcModule } from '@server/trpc/trpc.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from '@server/config/dataSource.options';
-import { TimeModule } from './time/time.module';
+import { ReceptionModule } from './reception/reception.module';
 
 
 @Module({
@@ -18,7 +18,7 @@ import { TimeModule } from './time/time.module';
     }),
     TrpcModule,
     // UserModule,
-    TimeModule,
+    ReceptionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
