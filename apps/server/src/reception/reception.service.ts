@@ -14,12 +14,11 @@ export class ReceptionService {
 
 
  seedReceptions() {
-try {
   const receptions = [];
+  const today = moment()
   for (let i = 0; i < 3; i++) {
-    const date = moment.tz(`2024-04-${13 + i}T06:00:00`, 'Europe/Moscow')
-      .format();
-
+    const date = today.add(i, 'days').tz('Europe/Moscow').format('YYYY-MM-DD');
+        console.log(date)
     for (let j = 0; j < 16; j++) {
       const reception = new ReceptionEntity()
       reception.date = date
@@ -28,9 +27,6 @@ try {
     }
   }
 
-  this.receptionRepository.save(receptions)
-}catch(error){
-     console.log(error)
-   }
+  return this.receptionRepository.save(receptions)
 }
 }

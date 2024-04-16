@@ -1,20 +1,23 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn,  } from "typeorm";
 import { IntervalSequenceNumberEnum } from "../enums/interval.sequence.number.enum";
 
 @Entity({name: 'receptions'})
 export class ReceptionEntity  {
-  @PrimaryGeneratedColumn()
-    id!: number
 
-  @Column({
+  @PrimaryColumn({
+    primaryKeyConstraintName: 'receptions_time_pkey',
     type:'timestamptz',
     default:()=>'CURRENT_TIMESTAMP()',
   })
   date!: Date
 
-  @Column({
+  @PrimaryColumn({
+    primaryKeyConstraintName: 'receptions_time_pkey',
     type:'enum',
     enum: IntervalSequenceNumberEnum,
   })
   timeInterval!: IntervalSequenceNumberEnum
+
+  @Column({type:'boolean',default:true})
+  available!: boolean
 }
