@@ -6,12 +6,12 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from '@server/config/dataSource.options';
 import { ReceptionModule } from './reception/reception.module';
-
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load:[dataSourceOptions]
+      load: [dataSourceOptions],
     }),
     TypeOrmModule.forRoot({
       ...dataSourceOptions(),
@@ -19,6 +19,7 @@ import { ReceptionModule } from './reception/reception.module';
     TrpcModule,
     // UserModule,
     ReceptionModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
