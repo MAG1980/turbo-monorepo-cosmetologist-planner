@@ -26,7 +26,7 @@ export class OrderEntity {
       foreignKeyConstraintName: 'fk_reception_time',
     },
     {
-      name: 'reception_time_interval',
+      name: 'reception_time_interval_id',
       referencedColumnName: 'timeInterval',
       foreignKeyConstraintName: 'fk_reception_time',
     },

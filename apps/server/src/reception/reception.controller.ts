@@ -8,8 +8,7 @@ export class ReceptionController {
   @Get('seed')
   async seedReceptions() {
     try {
-      const seededReceptions = await this.receptionService.seedReceptions();
-      console.log(seededReceptions);
+      await this.receptionService.seedReceptions();
     } catch (error) {
       throw new HttpException(`Something went wrong: ${error}`, 500);
     }

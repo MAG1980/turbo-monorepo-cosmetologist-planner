@@ -1,23 +1,28 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { IntervalSequenceNumberEnum } from '../enums/interval.sequence.number.enum';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { TimeIntervalEntity } from '../../time-interval/entities/TimeInterval.entity';
 
 @Entity({ name: 'receptions' })
 export class ReceptionEntity {
   @PrimaryColumn({
     name: 'date',
+    type: 'date',
     primaryKeyConstraintName: 'receptions_time_pkey',
-    type: 'timestamptz',
-    default: () => 'CURRENT_TIMESTAMP()',
   })
   date!: Date;
 
+  @ManyToOne(() => TimeIntervalEntity, (timeInterval) => timeInterval.id)
   @PrimaryColumn({
-    name: 'time_interval',
+    name: 'time_interval_id',
+    type: 'integer',
     primaryKeyConstraintName: 'receptions_time_pkey',
-    type: 'enum',
-    enum: IntervalSequenceNumberEnum,
   })
-  timeInterval!: IntervalSequenceNumberEnum;
+  @JoinColumn({
+    name: 'time_interval_id',
+    referencedColumnName: 'id',
+    foreignKeyConstraintName: 'fk_time_interval_id',
+  })
+  // timeInterval!: TimeIntervalEntity;
+  timeInterval!: number;
 
   @Column({ type: 'boolean', default: true })
   available!: boolean;
