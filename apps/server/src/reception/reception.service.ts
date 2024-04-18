@@ -51,4 +51,15 @@ export class ReceptionService {
       )
       .getMany();
   }
+
+  getReceptionsByDateAndTimeInterval(date: string, timeInterval: string) {
+    console.log(date, timeInterval);
+    return this.receptionRepository
+      .createQueryBuilder('reception')
+      .where(
+        'reception.date = :date AND reception.timeInterval = :timeInterval',
+        { date: moment(date).format('YYYY-MM-DD'), timeInterval },
+      )
+      .getOne();
+  }
 }

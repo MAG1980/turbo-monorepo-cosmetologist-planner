@@ -20,4 +20,15 @@ export class ReceptionController {
   getReceptionsByTimeInterval(@Param('timeInterval') timeInterval: string) {
     return this.receptionService.getReceptionsByTimeInterval(timeInterval);
   }
+
+  @Get('by-date-and-time/:date/:time')
+  getReceptionsByDateAndTimeInterval(
+    @Param('date') date: string,
+    @Param('time') timeInterval: string,
+  ) {
+    return this.receptionService.getReceptionsByDateAndTimeInterval(
+      date,
+      timeInterval,
+    );
+  }
 }
