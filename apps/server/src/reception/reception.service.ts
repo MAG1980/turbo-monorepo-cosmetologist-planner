@@ -30,4 +30,14 @@ export class ReceptionService {
 
     return this.receptionRepository.save(receptions);
   }
+
+  getReceptionsByTimeInterval(timeInterval: string) {
+    return this.receptionRepository
+      .createQueryBuilder('reception')
+      .where(
+        'reception.available = true AND reception.timeInterval = :timeInterval',
+        { timeInterval },
+      )
+      .getMany();
+  }
 }

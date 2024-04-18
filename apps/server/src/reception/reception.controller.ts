@@ -1,4 +1,4 @@
-import { Controller, Get, HttpException } from '@nestjs/common';
+import { Controller, Get, HttpException, Param } from '@nestjs/common';
 import { ReceptionService } from '@server/reception/reception.service';
 
 @Controller('reception')
@@ -15,5 +15,10 @@ export class ReceptionController {
     }
 
     return 'Receptions seeded!';
+  }
+
+  @Get('by-time-interval/:timeInterval')
+  getReceptionsByTimeInterval(@Param('timeInterval') timeInterval: string) {
+    return this.receptionService.getReceptionsByTimeInterval(timeInterval);
   }
 }
