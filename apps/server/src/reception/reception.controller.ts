@@ -21,6 +21,11 @@ export class ReceptionController {
     return this.receptionService.getReceptionsByTimeInterval(timeInterval);
   }
 
+  @Get('by-date/:date')
+  getAvailableReceptionsByDate(@Param('date') date: string) {
+    return this.receptionService.getAvailableReceptionsByDate(date);
+  }
+
   @Get('by-date-and-time/:date/:time')
   getReceptionsByDateAndTimeInterval(
     @Param('date') date: string,

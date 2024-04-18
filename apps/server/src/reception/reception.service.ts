@@ -52,6 +52,13 @@ export class ReceptionService {
       .getMany();
   }
 
+  getAvailableReceptionsByDate(date: string) {
+    return this.receptionRepository
+      .createQueryBuilder('reception')
+      .where('reception.date = :date AND reception.available = true', { date })
+      .getMany();
+  }
+
   getReceptionsByDateAndTimeInterval(date: string, timeInterval: string) {
     console.log(date, timeInterval);
     return this.receptionRepository
