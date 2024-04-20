@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ReceptionEntity } from '../../reception/entities/Reception.entity';
+import { OrderStatus } from '../enums/OrderStatus.enum';
 
 @Entity({ name: 'orders' })
 export class OrderEntity {
@@ -17,6 +18,13 @@ export class OrderEntity {
 
   @Column({ name: 'service_id' })
   serviceId!: number;
+
+  @Column({
+    type: 'enum',
+    enum: OrderStatus,
+    default: 'CREATED',
+  })
+  status!: OrderStatus;
 
   @OneToOne(() => ReceptionEntity)
   @JoinColumn([
