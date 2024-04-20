@@ -1,11 +1,6 @@
 {
   "name": "turbo-monorepo-cosmetologist-planner",
   "private": true,
-  "husky": {
-    "hooks": {
-      "pre-commit": "lintd"
-    }
-  },
   "scripts": {
     "build": "turbo build",
     "dev": "dotenv -- turbo dev",
@@ -14,8 +9,7 @@
     "lint:client": "cd apps/client && npm run lint:staged",
     "lint-t": "turbo lint --",
     "format-t": "turbo format --",
-    "prepare": "husky install",
-    "pre-commit": "lint-staged"
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
@@ -27,5 +21,8 @@
   "packageManager": "pnpm@8.9.0",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "dotenv-cli": "^7.4.1"
   }
 }
