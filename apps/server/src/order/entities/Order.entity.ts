@@ -16,8 +16,8 @@ export class OrderEntity {
   @Column({ name: 'client_id' })
   clientId!: number;
 
-  @Column({ name: 'service_id' })
-  serviceId!: number;
+  @Column({ name: 'procedure_id' })
+  procedureId!: number;
 
   @Column({
     type: 'enum',
