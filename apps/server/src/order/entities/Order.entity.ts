@@ -2,11 +2,14 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ReceptionEntity } from '../../reception/entities/Reception.entity';
 import { OrderStatus } from '../enums/OrderStatus.enum';
+import { ProcedureEntity } from '../../procedure/entities/Procedure.entity';
 
 @Entity({ name: 'orders' })
 export class OrderEntity {
@@ -15,9 +18,6 @@ export class OrderEntity {
 
   @Column({ name: 'client_id' })
   clientId!: number;
-
-  @Column({ name: 'procedure_id' })
-  procedureId!: number;
 
   @Column({
     type: 'enum',
@@ -40,4 +40,20 @@ export class OrderEntity {
     },
   ])
   reception!: ReceptionEntity;
+
+  @ManyToMany(() => ProcedureEntity)
+  @JoinTable({
+    name: 'order_procedure',
+    joinColumn: {
+      name: 'order_id',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'fk_order_procedure',
+    },
+    inverseJoinColumn: {
+      name: 'procedure_id',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'fk_procedure_order',
+    },
+  })
+  procedures!: ProcedureEntity[];
 }
