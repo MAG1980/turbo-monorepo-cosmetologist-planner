@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from '@server/config/dataSource.options';
 import { ReceptionModule } from './reception/reception.module';
 import { OrderModule } from './order/order.module';
+import { ProcedureModule } from './procedure/procedure.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { OrderModule } from './order/order.module';
     // UserModule,
     ReceptionModule,
     OrderModule,
+    ProcedureModule,
   ],
   controllers: [AppController],
   providers: [AppService],

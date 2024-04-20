@@ -9,7 +9,9 @@
     "lint:client": "cd apps/client && npm run lint:staged",
     "lint-t": "turbo lint --",
     "format-t": "turbo format --",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "mg:gen": "cd apps/server && npm run mg:gen",
+    "mg:run": "cd apps/server && npm run mg:run"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
