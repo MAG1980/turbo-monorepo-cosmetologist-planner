@@ -8,6 +8,7 @@ import { dataSourceOptions } from '@server/config/dataSource.options';
 import { ReceptionModule } from './reception/reception.module';
 import { OrderModule } from './order/order.module';
 import { ProcedureModule } from './procedure/procedure.module';
+import { ClientModule } from './client/client.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ProcedureModule } from './procedure/procedure.module';
     ReceptionModule,
     OrderModule,
     ProcedureModule,
+    ClientModule,
   ],
   controllers: [AppController],
   providers: [AppService],
