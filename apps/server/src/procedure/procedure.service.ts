@@ -23,4 +23,12 @@ export class ProcedureService {
 
     return this.procedureRepository.save(procedures);
   }
+
+  getAllProcedures() {
+    return this.procedureRepository.find();
+  }
+
+  getProcedureById(id: number) {
+    return this.procedureRepository.findOneBy({ id });
+  }
 }
