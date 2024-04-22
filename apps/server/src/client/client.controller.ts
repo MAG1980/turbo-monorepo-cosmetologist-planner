@@ -18,4 +18,16 @@ export class ClientController {
 
     return 'Clients seeded!';
   }
+
+  @Get('all')
+  async getAllClients() {
+    try {
+      return await this.clientService.getAllClients();
+    } catch (error) {
+      throw new HttpException(
+        `Something went wrong by getting all clients: ${error}`,
+        500,
+      );
+    }
+  }
 }

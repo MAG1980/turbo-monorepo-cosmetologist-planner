@@ -13,6 +13,7 @@ export class ClientService {
 
   seedClients(amount: string) {
     const clients: ClientEntity[] = [];
+
     for (let i = 0; i < parseInt(amount); i++) {
       const client = new ClientEntity();
       client.login = faker.internet.userName();
@@ -22,5 +23,9 @@ export class ClientService {
       clients.push(client);
     }
     return this.clientRepository.save(clients);
+  }
+
+  getAllClients() {
+    return this.clientRepository.find();
   }
 }
