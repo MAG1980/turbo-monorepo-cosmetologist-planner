@@ -42,6 +42,10 @@ export class ReceptionService {
     return this.receptionRepository.save(receptions);
   }
 
+  getAvailableReceptions() {
+    return this.receptionRepository.find({ where: { available: true } });
+  }
+
   getReceptionsByTimeInterval(timeInterval: string) {
     return this.receptionRepository
       .createQueryBuilder('reception')
@@ -68,5 +72,17 @@ export class ReceptionService {
         { date: moment(date).format('YYYY-MM-DD'), timeInterval },
       )
       .getOne();
+  }
+
+  updateAvailability(reception: ReceptionEntity) {
+    return this.receptionRepository
+      .createQueryBuilder('reception')
+      .update(ReceptionEntity)
+      .set({ available: reception.available })
+      .where('date = :date', { date: reception.date })
+      .andWhere('timeInterval = :timeInterval', {
+        timeInterval: reception.timeInterval,
+      })
+      .execute();
   }
 }
