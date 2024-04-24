@@ -55,4 +55,11 @@ export class OrderService {
       await transactionalEntityManager.save(orders);
     });
   }
+
+  getOrdersByClient(id: number) {
+    return this.orderRepository.find({
+      where: { clientId: id },
+      relations: ['reception', 'procedures'],
+    });
+  }
 }

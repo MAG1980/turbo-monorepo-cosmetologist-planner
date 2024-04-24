@@ -15,4 +15,13 @@ export class OrderController {
 
     return 'Orders seeded!';
   }
+
+  @Get('orders-by-client/:id')
+  async getOrdersByClient(@Param('id') id: number) {
+    try {
+      return await this.orderService.getOrdersByClient(id);
+    } catch (error) {
+      throw new HttpException(`Something went wrong: ${error}`, 500);
+    }
+  }
 }
