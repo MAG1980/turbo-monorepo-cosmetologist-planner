@@ -6,6 +6,8 @@ import { faker } from '@faker-js/faker';
 import { OrderStatus } from '@server/order/enums/OrderStatus.enum';
 import { ClientService } from '@server/client/client.service';
 import { ReceptionService } from '@server/reception/reception.service';
+import AppDataSource from '@server/config/dataSource';
+import { ReceptionEntity } from '@server/reception/entities/Reception.entity';
 
 @Injectable()
 export class OrderService {
@@ -21,25 +23,36 @@ export class OrderService {
     const clients = await this.clientService.getAllClients();
     let receptions = await this.receptionService.getAvailableReceptions();
 
-    for (let i = 0; i < amount; i++) {
-      const order = new OrderEntity();
-      order.status = faker.helpers.arrayElement(Object.values(OrderStatus));
-      order.clientId = faker.helpers.arrayElement(clients).id;
+    const dataSource = await AppDataSource;
 
-      const reception = faker.helpers.arrayElement(receptions);
+    await dataSource.transaction(async (transactionalEntityManager) => {
+      for (let i = 0; i < amount; i++) {
+        const order = new OrderEntity();
+        order.status = faker.helpers.arrayElement(Object.values(OrderStatus));
+        order.clientId = faker.helpers.arrayElement(clients).id;
 
-      order.reception = reception;
+        const reception = faker.helpers.arrayElement(receptions);
 
-      reception.available = false;
-      await this.receptionService.updateAvailability(reception);
+        order.reception = reception;
 
-      receptions = receptions.filter(
-        (r) =>
-          r.date !== reception.date ||
-          r.timeInterval !== reception.timeInterval,
-      );
-      orders.push(order);
-    }
-    await this.orderRepository.save(orders);
+        await transactionalEntityManager
+          .createQueryBuilder()
+          .update(ReceptionEntity)
+          .set({ available: false })
+          .where('date = :date', { date: reception.date })
+          .andWhere('timeInterval = :timeInterval', {
+            timeInterval: reception.timeInterval,
+          })
+          .execute();
+
+        receptions = receptions.filter(
+          (r) =>
+            r.date !== reception.date ||
+            r.timeInterval !== reception.timeInterval,
+        );
+        orders.push(order);
+      }
+      await transactionalEntityManager.save(orders);
+    });
   }
 }
