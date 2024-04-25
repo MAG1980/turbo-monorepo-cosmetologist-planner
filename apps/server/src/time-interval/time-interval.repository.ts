@@ -14,16 +14,25 @@ export const TimeIntervalRepository = dataSource
     },
 
     async seedTimeIntervals() {
-      const timeIntervals: TimeIntervalEntity[] = [];
-      Object.keys(IntervalSequenceNumberEnum)
-        .filter((enumKey) => isNaN(enumKey as any))
-        .forEach((enumKey) => {
-          console.log('enumKey ', enumKey);
-          const timeInterval = new TimeIntervalEntity();
-          timeInterval.name = enumKey;
-          timeIntervals.push(timeInterval);
-        });
+      if (!(await this.getAllTimeIntervals())) {
+        try {
+          const timeIntervals: TimeIntervalEntity[] = [];
+          Object.keys(IntervalSequenceNumberEnum)
+            .filter((enumKey) => isNaN(enumKey as any))
+            .forEach((enumKey) => {
+              console.log('enumKey ', enumKey);
+              const timeInterval = new TimeIntervalEntity();
+              timeInterval.name = enumKey;
+              timeIntervals.push(timeInterval);
+            });
 
-      await this.save(timeIntervals);
+          console.log('timeIntervals seeded: ', await this.save(timeIntervals));
+        } catch (error) {
+          throw new Error(
+            `Something went wrong by seeding timeIntervals: ${error}`,
+          );
+        }
+      }
+      console.log('timeIntervals already seeded!');
     },
   });
