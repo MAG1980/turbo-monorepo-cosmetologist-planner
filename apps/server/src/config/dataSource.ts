@@ -5,4 +5,5 @@ const AppDataSource = new DataSource({
   ...dataSourceOptions(),
 });
 
-export default AppDataSource.initialize();
+AppDataSource.initialize();
+export default AppDataSource;

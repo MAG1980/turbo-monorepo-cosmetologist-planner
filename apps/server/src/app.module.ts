@@ -9,6 +9,7 @@ import { ReceptionModule } from './reception/reception.module';
 import { OrderModule } from './order/order.module';
 import { ProcedureModule } from './procedure/procedure.module';
 import { ClientModule } from './client/client.module';
+import { TimeIntervalModule } from '@server/time-interval/time-interval.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ClientModule } from './client/client.module';
     OrderModule,
     ProcedureModule,
     ClientModule,
+    TimeIntervalModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -3,25 +3,23 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import moment from 'moment-timezone';
 import { ReceptionEntity } from '@server/reception/entities/Reception.entity';
-import { TimeIntervalService } from '@server/time-interval/time-interval.service';
-
+import { TimeIntervalRepository } from '@server/time-interval/time-interval.repository';
 @Injectable()
 export class ReceptionService {
   constructor(
     @InjectRepository(ReceptionEntity)
     private readonly receptionRepository: Repository<ReceptionEntity>,
-    private readonly timeIntervalService: TimeIntervalService,
   ) {}
 
   async seedReceptions() {
-    if ((await this.timeIntervalService.countTimeIntervals()) === 0) {
-      await this.timeIntervalService.seedTimeIntervals();
+    if ((await TimeIntervalRepository.countTimeIntervals()) === 0) {
+      await TimeIntervalRepository.seedTimeIntervals();
       console.log('timeIntervals seeded!');
     } else {
       console.log('timeIntervals already seeded!');
     }
 
-    const timeIntervals = await this.timeIntervalService.getAllTimeIntervals();
+    const timeIntervals = await TimeIntervalRepository.getAllTimeIntervals();
 
     const receptions = [];
     const today = moment();
