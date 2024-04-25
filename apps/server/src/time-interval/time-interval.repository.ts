@@ -13,9 +13,9 @@ export const TimeIntervalRepository = dataSource
       return await this.find();
     },
 
-    async seedTimeIntervals() {
-      if (!(await this.getAllTimeIntervals())) {
-        try {
+    async seed() {
+      try {
+        if (!(await this.getAllTimeIntervals())) {
           const timeIntervals: TimeIntervalEntity[] = [];
           Object.keys(IntervalSequenceNumberEnum)
             .filter((enumKey) => isNaN(enumKey as any))
@@ -27,12 +27,12 @@ export const TimeIntervalRepository = dataSource
             });
 
           console.log('timeIntervals seeded: ', await this.save(timeIntervals));
-        } catch (error) {
-          throw new Error(
-            `Something went wrong by seeding timeIntervals: ${error}`,
-          );
         }
+        console.log('timeIntervals already seeded!');
+      } catch (error) {
+        throw new Error(
+          `Something went wrong by seeding timeIntervals: ${error}`,
+        );
       }
-      console.log('timeIntervals already seeded!');
     },
   });

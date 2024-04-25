@@ -13,7 +13,7 @@ export class ReceptionService {
 
   async seedReceptions() {
     if ((await TimeIntervalRepository.countTimeIntervals()) === 0) {
-      await TimeIntervalRepository.seedTimeIntervals();
+      await TimeIntervalRepository.seed();
       console.log('timeIntervals seeded!');
     } else {
       console.log('timeIntervals already seeded!');

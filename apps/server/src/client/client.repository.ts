@@ -3,7 +3,7 @@ import { ClientEntity } from '@server/client/entities/Client.entity';
 import { faker } from '@faker-js/faker/locale/ru';
 
 export const ClientRepository = dataSource.getRepository(ClientEntity).extend({
-  async seedClients(amount: number) {
+  async seed(amount: number) {
     const clients: ClientEntity[] = [];
 
     try {
