@@ -34,7 +34,8 @@
     "mg:gen": "pnpm run to-ts-node migration:generate ./migrations/m",
     "mg:rev": "pnpm run to-ts-node migration:revert",
     "mg:cr": "typeorm migration:create ./migrations/created_migration",
-    "lint:staged": "lint-staged"
+    "lint:staged": "lint-staged",
+    "seed": "ts-node -r tsconfig-paths/register ./src/helpers/seeder/main.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
