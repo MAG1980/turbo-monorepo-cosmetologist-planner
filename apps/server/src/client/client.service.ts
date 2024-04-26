@@ -4,6 +4,6 @@ import { ClientRepository } from '@server/client/client.repository';
 @Injectable()
 export class ClientService {
   getAllClients() {
-    return ClientRepository.find();
+    return ClientRepository.getAllClients();
   }
 }

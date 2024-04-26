@@ -4,6 +4,7 @@ import { TimeIntervalRepository } from '@server/time-interval/time-interval.repo
 import { ClientRepository } from '@server/client/client.repository';
 import { ProcedureRepository } from '@server/procedure/procedure.repository';
 import { ReceptionRepository } from '@server/reception/reception.repository';
+import { OrderRepository } from '@server/order/order.repository';
 
 export const seedData = async (dataSource: DataSource) => {
   const orderRepository = dataSource.getRepository(OrderEntity);
@@ -13,4 +14,5 @@ export const seedData = async (dataSource: DataSource) => {
   await TimeIntervalRepository.seed();
   await ReceptionRepository.seed(1);
   await ClientRepository.seed(0);
+  await OrderRepository.seed(1);
 };
