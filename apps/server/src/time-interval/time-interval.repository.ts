@@ -15,18 +15,19 @@ export const TimeIntervalRepository = dataSource
 
     async seed() {
       try {
-        if (!(await this.getAllTimeIntervals())) {
+        if ((await this.countTimeIntervals()) === 0) {
           const timeIntervals: TimeIntervalEntity[] = [];
           Object.keys(IntervalSequenceNumberEnum)
             .filter((enumKey) => isNaN(enumKey as any))
             .forEach((enumKey) => {
-              console.log('enumKey ', enumKey);
               const timeInterval = new TimeIntervalEntity();
               timeInterval.name = enumKey;
               timeIntervals.push(timeInterval);
             });
 
-          console.log('timeIntervals seeded: ', await this.save(timeIntervals));
+          await this.save(timeIntervals);
+          console.log('timeIntervals seeded!');
+          return;
         }
         console.log('timeIntervals already seeded!');
       } catch (error) {

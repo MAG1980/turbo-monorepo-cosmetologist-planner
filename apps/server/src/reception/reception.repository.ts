@@ -17,7 +17,7 @@ export const ReceptionRepository = dataSource
           .add(1, 'days')
           .tz('Europe/Moscow')
           .format('YYYY-MM-DD');
-        console.log('date ', date);
+
         for (const timeInterval of timeIntervals) {
           const reception = new ReceptionEntity();
           reception.date = date;

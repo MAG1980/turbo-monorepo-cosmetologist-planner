@@ -17,7 +17,9 @@ export const ProcedureRepository = dataSource
             procedures.push(procedure);
           });
 
-          console.log('Procedures seeded:', await this.save(procedures));
+          await this.save(procedures);
+          console.log('Procedures seeded!');
+          return;
         }
         console.log('Procedures already seeded!');
       } catch (error) {

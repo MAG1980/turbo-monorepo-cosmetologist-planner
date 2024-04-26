@@ -16,7 +16,8 @@ export const ClientRepository = dataSource.getRepository(ClientEntity).extend({
         clients.push(client);
       }
 
-      console.log('Clients seeded:', await this.save(clients));
+      await this.save(clients);
+      console.log('Clients seeded!');
     } catch (error) {
       throw new Error(`Something went wrong by seeding clients: ${error}`);
     }
