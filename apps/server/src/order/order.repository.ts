@@ -4,6 +4,8 @@ import { faker } from '@faker-js/faker';
 import { OrderStatus } from '@server/order/enums/OrderStatus.enum';
 import { ClientRepository } from '@server/client/client.repository';
 import { ReceptionRepository } from '@server/reception/reception.repository';
+import { ProcedureEntity } from '@server/procedure/entities/Procedure.entity';
+import { ProcedureRepository } from '@server/procedure/procedure.repository';
 
 export const OrderRepository = dataSource.getRepository(OrderEntity).extend({
   async seed(ordersAmount: number = 1) {
@@ -11,11 +13,13 @@ export const OrderRepository = dataSource.getRepository(OrderEntity).extend({
       const orders: OrderEntity[] = [];
       const clients = await ClientRepository.getAllClients();
       let receptions = await ReceptionRepository.getAvailableReceptions();
+      const procedures = await ProcedureRepository.find();
 
       for (let i = 0; i < ordersAmount; i++) {
         const order = new OrderEntity();
         order.status = faker.helpers.arrayElement(Object.values(OrderStatus));
         order.clientId = faker.helpers.arrayElement(clients).id;
+        order.procedures = this.getRandomProcedures(procedures);
 
         const reception = faker.helpers.arrayElement(receptions);
         order.reception = reception;
@@ -35,6 +39,22 @@ export const OrderRepository = dataSource.getRepository(OrderEntity).extend({
     } catch (error) {
       console.log('Something went wrong by seeding orders: ', error);
     }
+  },
+
+  getRandomProcedures(procedures: ProcedureEntity[]) {
+    const availableProcedures = [...procedures];
+    const getRandomProcedure = () => {
+      return availableProcedures.splice(
+        faker.number.int({ min: 0, max: availableProcedures.length - 1 }),
+        1,
+      )[0] as ProcedureEntity;
+    };
+    return Array.from(
+      {
+        length: faker.number.int({ min: 1, max: 3 }),
+      },
+      getRandomProcedure,
+    );
   },
 
   getOrdersByClient(id: number) {

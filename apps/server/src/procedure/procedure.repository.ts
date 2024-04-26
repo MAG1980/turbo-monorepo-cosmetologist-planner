@@ -8,7 +8,7 @@ export const ProcedureRepository = dataSource
   .extend({
     async seed() {
       try {
-        if (!(await this.find())) {
+        if ((await this.count()) === 0) {
           const procedures: ProcedureEntity[] = [];
           Object.values(ProcedureEnum).forEach((procedureName) => {
             const procedure = new ProcedureEntity();

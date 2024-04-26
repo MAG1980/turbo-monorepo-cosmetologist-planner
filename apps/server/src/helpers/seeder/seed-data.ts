@@ -7,11 +7,11 @@ import { DataSource } from 'typeorm';
 
 export const seedData = async (dataSource: DataSource) => {
   //Пример получения DataSource
-  console.log(dataSource.manager);
+  console.log(dataSource.manager.connection.migrations);
 
   await ProcedureRepository.seed();
   await TimeIntervalRepository.seed();
   await ReceptionRepository.seed(150);
   await ClientRepository.seed(50);
-  await OrderRepository.seed(1500);
+  await OrderRepository.seed(150);
 };
