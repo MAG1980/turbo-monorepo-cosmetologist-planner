@@ -7,6 +7,7 @@ import { ProcedureRepository } from '@server/procedure/procedure.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ProcedureEntity])],
+  exports: [ProcedureRepository],
   providers: [ProcedureService, ProcedureRepository],
   controllers: [ProcedureController],
 })

@@ -7,8 +7,8 @@ import { TimeIntervalRepository } from '@server/time-interval/time-interval.repo
 
 @Module({
   imports: [TypeOrmModule.forFeature([TimeIntervalEntity])],
+  exports: [TimeIntervalRepository],
   providers: [TimeIntervalService, TimeIntervalRepository],
-  exports: [TimeIntervalService],
   controllers: [TimeIntervalController],
 })
 export class TimeIntervalModule {}

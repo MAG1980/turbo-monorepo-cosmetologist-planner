@@ -6,15 +6,11 @@ import { DataSource, Repository } from 'typeorm';
 
 @Injectable()
 export class ReceptionRepository extends Repository<ReceptionEntity> {
-  constructor(
-    private readonly dataSource: DataSource,
-    private readonly timeIntervalRepository: TimeIntervalRepository,
-  ) {
+  constructor(private readonly dataSource: DataSource) {
     super(ReceptionEntity, dataSource.createEntityManager());
   }
-  async seed(daysAmount = 0) {
-    const timeIntervals =
-      await this.timeIntervalRepository.getAllTimeIntervals();
+  async seed(daysAmount = 15, timeIntervalRepository: TimeIntervalRepository) {
+    const timeIntervals = await timeIntervalRepository.getAllTimeIntervals();
 
     const startDate = moment(await this.getLastReceptionDate()) || moment();
     const receptions = [];

@@ -10,6 +10,7 @@ import { OrderModule } from './order/order.module';
 import { ProcedureModule } from './procedure/procedure.module';
 import { ClientModule } from './client/client.module';
 import { TimeIntervalModule } from '@server/time-interval/time-interval.module';
+import { SeederModule } from '@server/helpers/seeder/seeder.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TimeIntervalModule } from '@server/time-interval/time-interval.module';
     ProcedureModule,
     ClientModule,
     TimeIntervalModule,
+    SeederModule,
   ],
   controllers: [AppController],
   providers: [AppService],

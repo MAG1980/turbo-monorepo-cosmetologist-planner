@@ -10,20 +10,20 @@ import { DataSource, Repository } from 'typeorm';
 
 @Injectable()
 export class OrderRepository extends Repository<OrderEntity> {
-  constructor(
-    private readonly dataSource: DataSource,
-    private readonly clientRepository: ClientRepository,
-    private readonly procedureRepository: ProcedureRepository,
-    private readonly receptionRepository: ReceptionRepository,
-  ) {
+  constructor(private readonly dataSource: DataSource) {
     super(OrderEntity, dataSource.createEntityManager());
   }
-  async seed(ordersAmount: number = 1) {
+  async seed(
+    ordersAmount: number = 15,
+    clientRepository: ClientRepository,
+    receptionRepository: ReceptionRepository,
+    procedureRepository: ProcedureRepository,
+  ) {
     try {
       const orders: OrderEntity[] = [];
-      const clients = await this.clientRepository.getAllClients();
-      let receptions = await this.receptionRepository.getAvailableReceptions();
-      const procedures = await this.procedureRepository.find();
+      const clients = await clientRepository.getAllClients();
+      let receptions = await receptionRepository.getAvailableReceptions();
+      const procedures = await procedureRepository.find();
 
       for (let i = 0; i < ordersAmount; i++) {
         const order = new OrderEntity();
@@ -34,7 +34,7 @@ export class OrderRepository extends Repository<OrderEntity> {
         const reception = faker.helpers.arrayElement(receptions);
         order.reception = reception;
         reception.available = false;
-        await this.receptionRepository.updateAvailability(reception);
+        await receptionRepository.updateAvailability(reception);
 
         receptions = receptions.filter(
           (r) =>

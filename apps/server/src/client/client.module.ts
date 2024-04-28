@@ -7,6 +7,7 @@ import { ClientRepository } from '@server/client/client.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ClientEntity])],
+  exports: [ClientRepository],
   providers: [ClientService, ClientRepository],
   controllers: [ClientController],
 })

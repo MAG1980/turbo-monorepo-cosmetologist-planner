@@ -8,7 +8,7 @@ export class ClientRepository extends Repository<ClientEntity> {
   constructor(private readonly dataSource: DataSource) {
     super(ClientEntity, dataSource.createEntityManager());
   }
-  async seed(clientsAmount: number) {
+  async seed(clientsAmount: number = 5) {
     const clients: ClientEntity[] = [];
 
     try {

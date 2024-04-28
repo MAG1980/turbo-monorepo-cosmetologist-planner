@@ -6,7 +6,7 @@ import { seedData } from '@server/helpers/seeder/seed-data';
 const runSeeder = async () => {
   const app = await NestFactory.create(AppModule);
   const dataSource = app.get(DataSource);
-  await seedData(dataSource);
+  await seedData(dataSource, app);
   await app.close();
 };
 
