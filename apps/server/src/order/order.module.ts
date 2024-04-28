@@ -4,11 +4,13 @@ import { OrderService } from './order.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderEntity } from '@server/order/entities/Order.entity';
 import { ClientEntity } from '@server/client/entities/Client.entity';
-import { ClientService } from '@server/client/client.service';
-import { ReceptionService } from '@server/reception/reception.service';
 import { ReceptionEntity } from '@server/reception/entities/Reception.entity';
 import { TimeIntervalEntity } from '@server/time-interval/entities/TimeInterval.entity';
-import { TimeIntervalService } from '@server/time-interval/time-interval.service';
+import { OrderRepository } from '@server/order/order.repository';
+import { ClientRepository } from '@server/client/client.repository';
+import { ProcedureRepository } from '@server/procedure/procedure.repository';
+import { ReceptionRepository } from '@server/reception/reception.repository';
+import { TimeIntervalRepository } from '@server/time-interval/time-interval.repository';
 
 @Module({
   imports: [
@@ -22,9 +24,11 @@ import { TimeIntervalService } from '@server/time-interval/time-interval.service
   controllers: [OrderController],
   providers: [
     OrderService,
-    ClientService,
-    ReceptionService,
-    TimeIntervalService,
+    OrderRepository,
+    ClientRepository,
+    ProcedureRepository,
+    ReceptionRepository,
+    TimeIntervalRepository,
   ],
 })
 export class OrderModule {}

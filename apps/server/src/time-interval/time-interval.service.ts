@@ -4,7 +4,10 @@ import { TimeIntervalRepository } from '@server/time-interval/time-interval.repo
 
 @Injectable()
 export class TimeIntervalService {
+  constructor(
+    private readonly timeIntervalRepository: TimeIntervalRepository,
+  ) {}
   async getAllTimeIntervals(): Promise<TimeIntervalEntity[]> {
-    return TimeIntervalRepository.find();
+    return this.timeIntervalRepository.find();
   }
 }

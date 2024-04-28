@@ -9,9 +9,23 @@ export const seedData = async (dataSource: DataSource) => {
   //Пример получения DataSource
   console.log(dataSource.manager.connection.migrations);
 
-  await ProcedureRepository.seed();
-  await TimeIntervalRepository.seed();
-  await ReceptionRepository.seed(150);
-  await ClientRepository.seed(50);
-  await OrderRepository.seed(150);
+  const procedureRepository = new ProcedureRepository(dataSource);
+  const timeIntervalRepository = new TimeIntervalRepository(dataSource);
+  const receptionRepository = new ReceptionRepository(
+    dataSource,
+    timeIntervalRepository,
+  );
+  const clientRepository = new ClientRepository(dataSource);
+  const orderRepository = new OrderRepository(
+    dataSource,
+    clientRepository,
+    procedureRepository,
+    receptionRepository,
+  );
+
+  await procedureRepository.seed();
+  await timeIntervalRepository.seed();
+  await receptionRepository.seed(150);
+  await clientRepository.seed(50);
+  await orderRepository.seed(150);
 };

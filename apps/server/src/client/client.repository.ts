@@ -1,8 +1,13 @@
-import dataSource from '@server/config/dataSource';
 import { ClientEntity } from '@server/client/entities/Client.entity';
 import { faker } from '@faker-js/faker/locale/ru';
+import { DataSource, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 
-export const ClientRepository = dataSource.getRepository(ClientEntity).extend({
+@Injectable()
+export class ClientRepository extends Repository<ClientEntity> {
+  constructor(private readonly dataSource: DataSource) {
+    super(ClientEntity, dataSource.createEntityManager());
+  }
   async seed(clientsAmount: number) {
     const clients: ClientEntity[] = [];
 
@@ -21,9 +26,9 @@ export const ClientRepository = dataSource.getRepository(ClientEntity).extend({
     } catch (error) {
       throw new Error(`Something went wrong by seeding clients: ${error}`);
     }
-  },
+  }
 
   getAllClients() {
     return this.find();
-  },
-});
+  }
+}

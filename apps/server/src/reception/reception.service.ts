@@ -3,16 +3,17 @@ import { ReceptionRepository } from '@server/reception/reception.repository';
 
 @Injectable()
 export class ReceptionService {
+  constructor(public readonly receptionRepository: ReceptionRepository) {}
   getReceptionsByTimeInterval(timeInterval: number) {
-    return ReceptionRepository.getReceptionsByTimeInterval(timeInterval);
+    return this.receptionRepository.getReceptionsByTimeInterval(timeInterval);
   }
 
   getAvailableReceptionsByDate(date: string) {
-    return ReceptionRepository.getAvailableReceptionsByDate(date);
+    return this.receptionRepository.getAvailableReceptionsByDate(date);
   }
 
   getReceptionsByDateAndTimeInterval(date: string, timeInterval: string) {
-    return ReceptionRepository.getReceptionsByDateAndTimeInterval(
+    return this.receptionRepository.getReceptionsByDateAndTimeInterval(
       date,
       timeInterval,
     );

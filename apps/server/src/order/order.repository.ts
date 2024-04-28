@@ -1,4 +1,3 @@
-import dataSource from '@server/config/dataSource';
 import { OrderEntity } from '@server/order/entities/Order.entity';
 import { faker } from '@faker-js/faker';
 import { OrderStatus } from '@server/order/enums/OrderStatus.enum';
@@ -6,14 +5,25 @@ import { ClientRepository } from '@server/client/client.repository';
 import { ReceptionRepository } from '@server/reception/reception.repository';
 import { ProcedureEntity } from '@server/procedure/entities/Procedure.entity';
 import { ProcedureRepository } from '@server/procedure/procedure.repository';
+import { Injectable } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
 
-export const OrderRepository = dataSource.getRepository(OrderEntity).extend({
+@Injectable()
+export class OrderRepository extends Repository<OrderEntity> {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly clientRepository: ClientRepository,
+    private readonly procedureRepository: ProcedureRepository,
+    private readonly receptionRepository: ReceptionRepository,
+  ) {
+    super(OrderEntity, dataSource.createEntityManager());
+  }
   async seed(ordersAmount: number = 1) {
     try {
       const orders: OrderEntity[] = [];
-      const clients = await ClientRepository.getAllClients();
-      let receptions = await ReceptionRepository.getAvailableReceptions();
-      const procedures = await ProcedureRepository.find();
+      const clients = await this.clientRepository.getAllClients();
+      let receptions = await this.receptionRepository.getAvailableReceptions();
+      const procedures = await this.procedureRepository.find();
 
       for (let i = 0; i < ordersAmount; i++) {
         const order = new OrderEntity();
@@ -24,7 +34,7 @@ export const OrderRepository = dataSource.getRepository(OrderEntity).extend({
         const reception = faker.helpers.arrayElement(receptions);
         order.reception = reception;
         reception.available = false;
-        await ReceptionRepository.updateAvailability(reception);
+        await this.receptionRepository.updateAvailability(reception);
 
         receptions = receptions.filter(
           (r) =>
@@ -39,7 +49,7 @@ export const OrderRepository = dataSource.getRepository(OrderEntity).extend({
     } catch (error) {
       console.log('Something went wrong by seeding orders: ', error);
     }
-  },
+  }
 
   getRandomProcedures(procedures: ProcedureEntity[]) {
     const availableProcedures = [...procedures];
@@ -55,12 +65,12 @@ export const OrderRepository = dataSource.getRepository(OrderEntity).extend({
       },
       getRandomProcedure,
     );
-  },
+  }
 
   getOrdersByClient(id: number) {
     return this.find({
       where: { clientId: id },
       relations: ['reception', 'procedures'],
     });
-  },
-});
+  }
+}

@@ -3,11 +3,12 @@ import { ProcedureRepository } from '@server/procedure/procedure.repository';
 
 @Injectable()
 export class ProcedureService {
+  constructor(private readonly procedureRepository: ProcedureRepository) {}
   getAllProcedures() {
-    return ProcedureRepository.find();
+    return this.procedureRepository.find();
   }
 
   getProcedureById(id: number) {
-    return ProcedureRepository.findOneBy({ id });
+    return this.procedureRepository.findOneBy({ id });
   }
 }
