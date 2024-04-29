@@ -2,6 +2,8 @@ import { ClientEntity } from '@server/client/entities/Client.entity';
 import { faker } from '@faker-js/faker/locale/ru';
 import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
+import { CreateUserDto } from '@server/client/dto/create-user.dto';
+import { UpdateUserDto } from '@server/client/dto/update-user.dto';
 
 @Injectable()
 export class ClientRepository extends Repository<ClientEntity> {
@@ -28,7 +30,24 @@ export class ClientRepository extends Repository<ClientEntity> {
     }
   }
 
-  getAllClients() {
+  createEntity(createUserDto: CreateUserDto) {
+    const entity = this.create(createUserDto);
+    return this.save(entity);
+  }
+
+  findAllEntities() {
     return this.find();
+  }
+
+  findOneEntity(id: number) {
+    return this.findOne({ where: { id } });
+  }
+
+  updateEntity(id: number, updateUserDto: UpdateUserDto) {
+    return this.update(id, updateUserDto);
+  }
+
+  removeEntity(id: number) {
+    return this.delete(id);
   }
 }

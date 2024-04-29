@@ -21,7 +21,7 @@ export class OrderRepository extends Repository<OrderEntity> {
   ) {
     try {
       const orders: OrderEntity[] = [];
-      const clients = await clientRepository.getAllClients();
+      const clients = await clientRepository.findAllEntities();
       let receptions = await receptionRepository.getAvailableReceptions();
       const procedures = await procedureRepository.find();
 
