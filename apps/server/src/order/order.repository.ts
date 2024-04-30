@@ -7,6 +7,7 @@ import { ProcedureEntity } from '@server/procedure/entities/Procedure.entity';
 import { ProcedureRepository } from '@server/procedure/procedure.repository';
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
+import { UpdateOrderDto } from '@server/order/dto/update-order.dto';
 
 @Injectable()
 export class OrderRepository extends Repository<OrderEntity> {
@@ -72,5 +73,26 @@ export class OrderRepository extends Repository<OrderEntity> {
       where: { clientId: id },
       relations: ['reception', 'procedures'],
     });
+  }
+
+  createEntity(order: OrderEntity) {
+    const entity = this.create(order);
+    return this.save(entity);
+  }
+
+  findAllEntities() {
+    return this.find();
+  }
+
+  findOneEntity(id: number) {
+    return this.findOne({ where: { id } });
+  }
+
+  updateEntity(id: number, updateOrderDto: UpdateOrderDto) {
+    return this.update(id, updateOrderDto);
+  }
+
+  removeEntity(id: number) {
+    return this.delete(id);
   }
 }

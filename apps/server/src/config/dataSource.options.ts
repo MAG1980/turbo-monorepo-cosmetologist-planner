@@ -15,9 +15,11 @@ export const dataSourceOptions = (): DataSourceOptions => ({
   database: process.env.DATABASE_NAME,
   ssl: true,
   timeTravelQueries: false,
+  logging: true,
 
   // entities: ["src/entity/*.ts"],
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+  subscribers: [__dirname + '/../**/*.subscriber{.ts,.js}'],
   synchronize: false,
   migrations: [__dirname + '/../../migrations/**/*{.ts,.js}'],
 });

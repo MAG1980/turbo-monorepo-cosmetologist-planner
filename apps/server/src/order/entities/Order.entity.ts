@@ -26,7 +26,7 @@ export class OrderEntity {
   })
   status!: OrderStatus;
 
-  @OneToOne(() => ReceptionEntity)
+  @OneToOne(() => ReceptionEntity, { cascade: ['update'] })
   @JoinColumn([
     {
       name: 'reception_date',
