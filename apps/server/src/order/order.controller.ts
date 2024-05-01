@@ -7,6 +7,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
@@ -19,7 +20,7 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Get('orders-by-client/:id')
-  async getOrdersByClient(@Param('id') id: number) {
+  async getOrdersByClient(@Param('id', ParseIntPipe) id: number) {
     try {
       return await this.orderService.getOrdersByClient(id);
     } catch (error) {
@@ -38,18 +39,21 @@ export class OrderController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.orderService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.orderService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.orderService.update(+id, updateOrderDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateOrderDto: UpdateOrderDto,
+  ) {
+    return this.orderService.update(id, updateOrderDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    return this.orderService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.orderService.remove(id);
   }
 }

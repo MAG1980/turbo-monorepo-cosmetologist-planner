@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
@@ -28,18 +29,21 @@ export class ClientController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.clientService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.clientService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.clientService.update(+id, updateUserDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.clientService.update(id, updateUserDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    return this.clientService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.clientService.remove(id);
   }
 }
