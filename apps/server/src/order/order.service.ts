@@ -6,6 +6,7 @@ import { OrderEntity } from '@server/order/entities/Order.entity';
 import { ReceptionEntity } from '@server/reception/entities/Reception.entity';
 import { DataSource, In } from 'typeorm';
 import { ProcedureEntity } from '@server/procedure/entities/Procedure.entity';
+import { GetOrdersDto } from '@server/order/dto/get-orders.dto';
 
 @Injectable()
 export class OrderService {
@@ -61,8 +62,8 @@ export class OrderService {
     }
   }
 
-  findAll() {
-    return this.orderRepository.findAllEntities();
+  findAll(getOrdersDto: GetOrdersDto) {
+    return this.orderRepository.findAllEntities(getOrdersDto);
   }
 
   findOne(id: number) {

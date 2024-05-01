@@ -8,6 +8,7 @@ import { ProcedureRepository } from '@server/procedure/procedure.repository';
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { UpdateOrderDto } from '@server/order/dto/update-order.dto';
+import { GetOrdersDto } from '@server/order/dto/get-orders.dto';
 
 @Injectable()
 export class OrderRepository extends Repository<OrderEntity> {
@@ -80,8 +81,37 @@ export class OrderRepository extends Repository<OrderEntity> {
     return this.save(entity);
   }
 
-  findAllEntities() {
-    return this.find();
+  findAllEntities(getOrdersDto: GetOrdersDto) {
+    const { status, date, timeInterval, procedureId } = getOrdersDto;
+    const queryBuilder = this.createQueryBuilder('order').select([
+      'order.id',
+      'order.client_id',
+      'order.status',
+      'order.reception_date',
+      'order.reception_time_interval_id',
+    ]);
+
+    if (status) {
+      queryBuilder.andWhere('order.status = :status', { status });
+    }
+
+    if (date) {
+      queryBuilder.andWhere('order.reception_date = :date', { date });
+    }
+
+    if (timeInterval) {
+      queryBuilder.andWhere(
+        'order.reception_time_interval_id = :timeInterval',
+        {
+          timeInterval,
+        },
+      );
+    }
+
+    if (procedureId) {
+    }
+
+    return queryBuilder.getRawMany();
   }
 
   findOneEntity(id: number) {

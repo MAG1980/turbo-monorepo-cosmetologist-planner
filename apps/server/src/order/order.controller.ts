@@ -10,10 +10,14 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
+  UsePipes,
 } from '@nestjs/common';
 import { OrderService } from '@server/order/order.service';
 import { CreateOrderDto } from '@server/order/dto/create-order.dto';
 import { UpdateOrderDto } from '@server/order/dto/update-order.dto';
+import { GetOrdersDto } from '@server/order/dto/get-orders.dto';
+import { GetOrdersDtoTransformPipe } from '@server/order/pipes/getOrdersDtoTransform.pipe';
 
 @Controller('order')
 export class OrderController {
@@ -34,8 +38,10 @@ export class OrderController {
   }
 
   @Get()
-  findAll() {
-    return this.orderService.findAll();
+  @UsePipes(GetOrdersDtoTransformPipe)
+  findAll(@Query() getOrdersDto: GetOrdersDto) {
+    console.log('getOrdersDto: ', getOrdersDto);
+    return this.orderService.findAll(getOrdersDto);
   }
 
   @Get(':id')
