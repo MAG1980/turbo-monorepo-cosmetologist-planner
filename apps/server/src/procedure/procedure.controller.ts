@@ -1,30 +1,51 @@
-import { Controller, Get, HttpException, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ProcedureService } from '@server/procedure/procedure.service';
+import { GetProceduresDto } from '@server/procedure/dto/get-procedures.dto';
+import { CreateProcedureDto } from '@server/procedure/dto/create-procedure.dto';
+import { UpdateProcedureDto } from '@server/procedure/dto/update-procedure.dto';
 
-@Controller('procedure')
+@Controller('procedures')
 export class ProcedureController {
   constructor(private readonly procedureService: ProcedureService) {}
-  @Get('all')
-  async getAllProcedures() {
-    try {
-      return await this.procedureService.getAllProcedures();
-    } catch (error) {
-      throw new HttpException(
-        `Something went wrong by getting procedures: ${error}`,
-        500,
-      );
-    }
+
+  @Post()
+  create(@Body() createProcedureDto: CreateProcedureDto) {
+    return this.procedureService.create(createProcedureDto);
   }
 
-  @Get('by-id/:id')
-  async getProcedureById(@Param('id') id: number) {
-    try {
-      return await this.procedureService.getProcedureById(id);
-    } catch (error) {
-      throw new HttpException(
-        `Something went wrong by getting procedure by id: ${error}`,
-        500,
-      );
-    }
+  @Get()
+  findAll(@Query() getProceduresDto: GetProceduresDto) {
+    return this.procedureService.findAll(getProceduresDto);
+  }
+
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.procedureService.findOne(id);
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateProcedureDto: UpdateProcedureDto,
+  ) {
+    return this.procedureService.update(id, updateProcedureDto);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.procedureService.remove(id);
   }
 }
