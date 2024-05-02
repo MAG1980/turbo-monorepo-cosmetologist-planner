@@ -5,7 +5,7 @@ import { ClientRepository } from '@server/client/client.repository';
 import { ReceptionRepository } from '@server/reception/reception.repository';
 import { ProcedureEntity } from '@server/procedure/entities/Procedure.entity';
 import { ProcedureRepository } from '@server/procedure/procedure.repository';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { UpdateOrderDto } from '@server/order/dto/update-order.dto';
 import { GetOrdersDto } from '@server/order/dto/get-orders.dto';
@@ -125,8 +125,12 @@ export class OrderRepository extends Repository<OrderEntity> {
     return queryBuilder.getRawMany();
   }
 
-  findOneEntity(id: number) {
-    return this.findOne({ where: { id } });
+  async findOneEntity(id: number) {
+    const entity = await this.findOne({ where: { id } });
+    if (!entity) {
+      throw new NotFoundException(`Order with ID = ${id} is not found!`);
+    }
+    return entity;
   }
 
   updateEntity(id: number, updateOrderDto: UpdateOrderDto) {

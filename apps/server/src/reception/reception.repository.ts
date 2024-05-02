@@ -1,7 +1,7 @@
 import { ReceptionEntity } from '@server/reception/entities/Reception.entity';
 import { TimeIntervalRepository } from '@server/time-interval/time-interval.repository';
 import moment from 'moment-timezone';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { CreateReceptionDto } from '@server/reception/dto/create-reception.dto';
 import { GetReceptionsDto } from '@server/reception/dto/get-receptions.dto';
@@ -101,10 +101,14 @@ export class ReceptionRepository extends Repository<ReceptionEntity> {
     return queryBuilder.getMany();
   }
 
-  findOneEntity(date: string, timeInterval: number) {
-    return this.findOne({
+  async findOneEntity(date: string, timeInterval: number) {
+    const reception = await this.findOne({
       where: { date: moment(date).format('YYYY-MM-DD'), timeInterval },
     });
+    if (!reception) {
+      throw new NotFoundException('Reception not found');
+    }
+    return reception;
   }
 
   updateEntity(

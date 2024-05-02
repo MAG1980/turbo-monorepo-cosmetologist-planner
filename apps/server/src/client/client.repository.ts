@@ -1,7 +1,7 @@
 import { ClientEntity } from '@server/client/entities/Client.entity';
 import { faker } from '@faker-js/faker/locale/ru';
 import { DataSource, Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateClientDto } from '@server/client/dto/create-client.dto';
 import { UpdateClientDto } from '@server/client/dto/update-client.dto';
 import { GetClientsDto } from '@server/client/dto/get-clients.dto';
@@ -57,8 +57,12 @@ export class ClientRepository extends Repository<ClientEntity> {
     return queryBuilder.getMany();
   }
 
-  findOneEntity(id: number) {
-    return this.findOne({ where: { id } });
+  async findOneEntity(id: number) {
+    const entity = await this.findOne({ where: { id } });
+    if (!entity) {
+      throw new NotFoundException(`Client with ID = ${id} is not found!`);
+    }
+    return entity;
   }
 
   updateEntity(id: number, updateClientDto: UpdateClientDto) {
