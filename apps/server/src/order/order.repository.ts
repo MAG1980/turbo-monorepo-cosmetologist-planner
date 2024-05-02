@@ -9,6 +9,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { UpdateOrderDto } from '@server/order/dto/update-order.dto';
 import { GetOrdersDto } from '@server/order/dto/get-orders.dto';
+import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class OrderRepository extends Repository<OrderEntity> {
@@ -81,7 +82,10 @@ export class OrderRepository extends Repository<OrderEntity> {
     return this.save(entity);
   }
 
-  findAllEntities(getOrdersDto: GetOrdersDto) {
+  findAllEntities(
+    getOrdersDto: GetOrdersDto,
+    paginationOptions: IPaginationOptions,
+  ) {
     const { clientId, status, date, timeInterval, procedureId } = getOrdersDto;
     const queryBuilder = this.createQueryBuilder('order')
       .leftJoin('order.procedures', 'procedure')
@@ -121,8 +125,9 @@ export class OrderRepository extends Repository<OrderEntity> {
     if (clientId) {
       queryBuilder.andWhere('order.client_id = :clientId', { clientId });
     }
+    queryBuilder.getRawMany();
 
-    return queryBuilder.getRawMany();
+    return paginate<OrderEntity>(queryBuilder, paginationOptions);
   }
 
   async findOneEntity(id: number) {

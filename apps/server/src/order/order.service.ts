@@ -7,6 +7,7 @@ import { ReceptionEntity } from '@server/reception/entities/Reception.entity';
 import { DataSource, In } from 'typeorm';
 import { ProcedureEntity } from '@server/procedure/entities/Procedure.entity';
 import { GetOrdersDto } from '@server/order/dto/get-orders.dto';
+import { IPaginationOptions } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class OrderService {
@@ -62,8 +63,11 @@ export class OrderService {
     }
   }
 
-  findAll(getOrdersDto: GetOrdersDto) {
-    return this.orderRepository.findAllEntities(getOrdersDto);
+  findAll(getOrdersDto: GetOrdersDto, paginationOptions: IPaginationOptions) {
+    return this.orderRepository.findAllEntities(
+      getOrdersDto,
+      paginationOptions,
+    );
   }
 
   findOne(id: number) {

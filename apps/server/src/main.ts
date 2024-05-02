@@ -3,6 +3,9 @@ import { AppModule } from './app.module';
 import { TrpcRouter } from '@server/trpc/trpc.router';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { config } from 'dotenv';
+
+config({ path: '../../.env' });
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +23,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(5000);
+  await app.listen(process.env.APP_PORT || 5000);
 }
 bootstrap();

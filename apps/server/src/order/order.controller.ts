@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
@@ -18,8 +19,12 @@ import { CreateOrderDto } from '@server/order/dto/create-order.dto';
 import { UpdateOrderDto } from '@server/order/dto/update-order.dto';
 import { GetOrdersDto } from '@server/order/dto/get-orders.dto';
 import { GetOrdersDtoTransformPipe } from '@server/order/pipes/getOrdersDtoTransform.pipe';
+import { config } from 'dotenv';
+import * as process from 'node:process';
 
-@Controller('order')
+config({ path: '../../.env' });
+
+@Controller('orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
@@ -39,9 +44,15 @@ export class OrderController {
 
   @Get()
   @UsePipes(GetOrdersDtoTransformPipe)
-  findAll(@Query() getOrdersDto: GetOrdersDto) {
+  findAll(
+    @Query() getOrdersDto: GetOrdersDto,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+  ) {
+    limit = limit > 100 ? 100 : limit;
     console.log('getOrdersDto: ', getOrdersDto);
-    return this.orderService.findAll(getOrdersDto);
+    const route = `${process.env.APP_PROTOCOL}://${process.env.APP_HOST}:${process.env.APP_PORT}/orders`;
+    return this.orderService.findAll(getOrdersDto, { page, limit, route });
   }
 
   @Get(':id')
