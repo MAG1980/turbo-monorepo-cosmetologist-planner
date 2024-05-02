@@ -1,48 +1,59 @@
-import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ReceptionService } from '@server/reception/reception.service';
+import { GetReceptionsDto } from '@server/reception/dto/get-receptions.dto';
+import { CreateReceptionDto } from '@server/reception/dto/create-reception.dto';
+import { UpdateReceptionDto } from '@server/reception/dto/update-reception.dto';
 
-@Controller('reception')
+@Controller('receptions')
 export class ReceptionController {
   constructor(private readonly receptionService: ReceptionService) {}
 
-  @Get('by-time-interval/:timeInterval')
-  async getReceptionsByTimeInterval(
-    @Param('timeInterval') timeInterval: number,
-  ) {
-    try {
-      return await this.receptionService.getReceptionsByTimeInterval(
-        timeInterval,
-      );
-    } catch (error) {
-      throw new NotFoundException(
-        'No receptions were found for the specified time interval.',
-      );
-    }
+  @Post()
+  create(@Body() createReceptionDto: CreateReceptionDto) {
+    return this.receptionService.create(createReceptionDto);
   }
 
-  @Get('by-date/:date')
-  async getAvailableReceptionsByDate(@Param('date') date: string) {
-    try {
-      return await this.receptionService.getAvailableReceptionsByDate(date);
-    } catch (error) {
-      throw new NotFoundException(`Receptions for ${date} not found`);
-    }
+  @Get()
+  findAll(@Query() getReceptionsDto: GetReceptionsDto) {
+    console.log('getReceptionsDto: ', getReceptionsDto);
+    return this.receptionService.findAll(getReceptionsDto);
   }
 
-  @Get('by-date-and-time/:date/:time')
-  async getReceptionsByDateAndTimeInterval(
+  @Get(':date/:timeInterval')
+  findOne(
     @Param('date') date: string,
-    @Param('time') timeInterval: string,
+    @Param('timeInterval', ParseIntPipe) timeInterval: number,
   ) {
-    try {
-      return await this.receptionService.getReceptionsByDateAndTimeInterval(
-        date,
-        timeInterval,
-      );
-    } catch (error) {
-      throw new NotFoundException(
-        `Receptions for ${date} and ${timeInterval} not found`,
-      );
-    }
+    return this.receptionService.findOne(date, timeInterval);
+  }
+
+  @Patch(':date/:timeInterval')
+  update(
+    @Param('date') date: string,
+    @Param('timeInterval', ParseIntPipe) timeInterval: number,
+    @Body() updateReceptionDto: UpdateReceptionDto,
+  ) {
+    return this.receptionService.update(date, timeInterval, updateReceptionDto);
+  }
+
+  @Delete(':date/:timeInterval')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(
+    @Param('date') date: string,
+    @Param('timeInterval', ParseIntPipe) timeInterval: number,
+  ) {
+    return this.receptionService.remove(date, timeInterval);
   }
 }

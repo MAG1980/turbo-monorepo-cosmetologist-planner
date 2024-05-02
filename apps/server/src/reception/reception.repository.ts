@@ -3,6 +3,9 @@ import { TimeIntervalRepository } from '@server/time-interval/time-interval.repo
 import moment from 'moment-timezone';
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
+import { CreateReceptionDto } from '@server/reception/dto/create-reception.dto';
+import { GetReceptionsDto } from '@server/reception/dto/get-receptions.dto';
+import { UpdateReceptionDto } from '@server/reception/dto/update-reception.dto';
 
 @Injectable()
 export class ReceptionRepository extends Repository<ReceptionEntity> {
@@ -40,33 +43,6 @@ export class ReceptionRepository extends Repository<ReceptionEntity> {
     return this.find({ where: { available: true } });
   }
 
-  getReceptionsByTimeInterval(timeInterval: number) {
-    return this.createQueryBuilder('reception')
-      .where(
-        'reception.available = true AND reception.timeInterval = :timeInterval',
-        { timeInterval },
-      )
-      .getMany();
-  }
-
-  getAvailableReceptionsByDate(date: string) {
-    return this.createQueryBuilder('reception')
-      .where('reception.date = :date AND reception.available = true', {
-        date,
-      })
-      .getMany();
-  }
-
-  getReceptionsByDateAndTimeInterval(date: string, timeInterval: string) {
-    console.log(date, timeInterval);
-    return this.createQueryBuilder('reception')
-      .where(
-        'reception.date = :date AND reception.timeInterval = :timeInterval',
-        { date: moment(date).format('YYYY-MM-DD'), timeInterval },
-      )
-      .getOne();
-  }
-
   updateAvailability(reception: ReceptionEntity) {
     return this.createQueryBuilder('reception')
       .update(ReceptionEntity)
@@ -88,5 +64,69 @@ export class ReceptionRepository extends Repository<ReceptionEntity> {
     if (lastReception) {
       return lastReception.date;
     }
+  }
+
+  createEntity(createReceptionDto: CreateReceptionDto) {
+    const { date, timeInterval, available } = createReceptionDto;
+    return this.createQueryBuilder('reception')
+      .insert()
+      .into(ReceptionEntity)
+      .values({
+        date: moment(date).format('YYYY-MM-DD'),
+        timeInterval,
+        available,
+      })
+      .execute();
+  }
+
+  findAllEntities(getReceptionsDto: GetReceptionsDto) {
+    const { date, timeInterval, available } = getReceptionsDto;
+    console.log('getReceptionsDto: ', getReceptionsDto);
+
+    const queryBuilder = this.createQueryBuilder('reception');
+    if (date) {
+      queryBuilder.andWhere('reception.date = :date', { date });
+    }
+    if (timeInterval) {
+      queryBuilder.andWhere('reception.timeInterval = :timeInterval', {
+        timeInterval,
+      });
+    }
+    if (available) {
+      queryBuilder.andWhere('reception.available = :available', {
+        available,
+      });
+    }
+
+    return queryBuilder.getMany();
+  }
+
+  findOneEntity(date: string, timeInterval: number) {
+    return this.findOne({
+      where: { date: moment(date).format('YYYY-MM-DD'), timeInterval },
+    });
+  }
+
+  updateEntity(
+    date: string,
+    timeInterval: number,
+    updateReceptionDto: UpdateReceptionDto,
+  ) {
+    const { available } = updateReceptionDto;
+    return this.createQueryBuilder('reception')
+      .update(ReceptionEntity)
+      .set({ available })
+      .where({ date: moment(date).format('YYYY-MM-DD') })
+      .andWhere({ timeInterval })
+      .execute();
+  }
+
+  removeEntity(date: string, timeInterval: number) {
+    return this.createQueryBuilder()
+      .delete()
+      .from(ReceptionEntity)
+      .where('date = :date', { date: moment(date).format('YYYY-MM-DD') })
+      .andWhere('timeInterval = :timeInterval', { timeInterval })
+      .execute();
   }
 }
