@@ -82,7 +82,7 @@ export class OrderRepository extends Repository<OrderEntity> {
   }
 
   findAllEntities(getOrdersDto: GetOrdersDto) {
-    const { status, date, timeInterval, procedureId } = getOrdersDto;
+    const { clientId, status, date, timeInterval, procedureId } = getOrdersDto;
     const queryBuilder = this.createQueryBuilder('order')
       .leftJoin('order.procedures', 'procedure')
       .select([
@@ -116,6 +116,10 @@ export class OrderRepository extends Repository<OrderEntity> {
 
     if (procedureId) {
       queryBuilder.andWhere('procedure.id = :procedureId', { procedureId });
+    }
+
+    if (clientId) {
+      queryBuilder.andWhere('order.client_id = :clientId', { clientId });
     }
 
     return queryBuilder.getRawMany();

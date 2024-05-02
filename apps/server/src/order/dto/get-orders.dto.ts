@@ -13,6 +13,11 @@ import moment from 'moment-timezone';
 
 export class GetOrdersDto {
   @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  clientId?: number;
+
+  @IsOptional()
   @IsEnum(OrderStatus)
   status?: OrderStatus;
 
