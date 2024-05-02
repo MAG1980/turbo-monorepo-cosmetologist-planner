@@ -2,8 +2,9 @@ import { ClientEntity } from '@server/client/entities/Client.entity';
 import { faker } from '@faker-js/faker/locale/ru';
 import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from '@server/client/dto/create-user.dto';
-import { UpdateUserDto } from '@server/client/dto/update-user.dto';
+import { CreateClientDto } from '@server/client/dto/create-client.dto';
+import { UpdateClientDto } from '@server/client/dto/update-client.dto';
+import { GetClientsDto } from '@server/client/dto/get-clients.dto';
 
 @Injectable()
 export class ClientRepository extends Repository<ClientEntity> {
@@ -30,21 +31,38 @@ export class ClientRepository extends Repository<ClientEntity> {
     }
   }
 
-  createEntity(createUserDto: CreateUserDto) {
-    const entity = this.create(createUserDto);
+  createEntity(createClientDto: CreateClientDto) {
+    const entity = this.create(createClientDto);
     return this.save(entity);
   }
 
-  findAllEntities() {
-    return this.find();
+  findAllEntities(getClientsDto: GetClientsDto = {}) {
+    const { search, email, phone } = getClientsDto;
+    const queryBuilder = this.createQueryBuilder('client');
+    if (search) {
+      queryBuilder.andWhere(
+        'client.name ILIKE :search OR client.login ILIKE :search',
+        {
+          search: `%${search}%`,
+        },
+      );
+    }
+    if (email) {
+      queryBuilder.andWhere('client.email = :email', { email });
+    }
+    if (phone) {
+      queryBuilder.andWhere('client.phone = :phone', { phone });
+    }
+
+    return queryBuilder.getMany();
   }
 
   findOneEntity(id: number) {
     return this.findOne({ where: { id } });
   }
 
-  updateEntity(id: number, updateUserDto: UpdateUserDto) {
-    return this.update(id, updateUserDto);
+  updateEntity(id: number, updateClientDto: UpdateClientDto) {
+    return this.update(id, updateClientDto);
   }
 
   removeEntity(id: number) {

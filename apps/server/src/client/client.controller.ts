@@ -9,23 +9,25 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ClientService } from '@server/client/client.service';
-import { CreateUserDto } from '@server/client/dto/create-user.dto';
-import { UpdateUserDto } from '@server/client/dto/update-user.dto';
+import { CreateClientDto } from '@server/client/dto/create-client.dto';
+import { UpdateClientDto } from '@server/client/dto/update-client.dto';
+import { GetClientsDto } from '@server/client/dto/get-clients.dto';
 
 @Controller('client')
 export class ClientController {
   constructor(private readonly clientService: ClientService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.clientService.create(createUserDto);
+  create(@Body() createClientDto: CreateClientDto) {
+    return this.clientService.create(createClientDto);
   }
 
   @Get()
-  findAll() {
-    return this.clientService.findAll();
+  findAll(@Query() getClientsDto: GetClientsDto) {
+    return this.clientService.findAll(getClientsDto);
   }
 
   @Get(':id')
@@ -36,9 +38,9 @@ export class ClientController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateClientDto: UpdateClientDto,
   ) {
-    return this.clientService.update(id, updateUserDto);
+    return this.clientService.update(id, updateClientDto);
   }
 
   @Delete(':id')
