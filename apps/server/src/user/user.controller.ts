@@ -16,7 +16,7 @@ import { CreateUserDto } from '@server/user/dto/create-user.dto';
 import { UpdateUserDto } from '@server/user/dto/update-user.dto';
 import { GetUsersDto } from '@server/user/dto/get-users.dto';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
