@@ -15,7 +15,7 @@ export class GetOrdersDto {
   @IsOptional()
   @IsInt()
   @Type(() => Number)
-  clientId?: number;
+  userId?: number;
 
   @IsOptional()
   @IsEnum(OrderStatus)

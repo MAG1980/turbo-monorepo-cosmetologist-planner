@@ -9,7 +9,7 @@ import {
 export class CreateOrderDto {
   @IsNotEmpty()
   @IsNumber()
-  clientId!: number;
+  userId!: number;
 
   @IsNotEmpty()
   @IsDateString()

@@ -28,10 +28,10 @@ config({ path: '../../.env' });
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Get('orders-by-client/:id')
-  async getOrdersByClient(@Param('id', ParseIntPipe) id: number) {
+  @Get('orders-by-user/:id')
+  async getOrdersByUser(@Param('id', ParseIntPipe) id: number) {
     try {
-      return await this.orderService.getOrdersByClient(id);
+      return await this.orderService.getOrdersByUser(id);
     } catch (error) {
       throw new HttpException(`Something went wrong: ${error}`, 500);
     }

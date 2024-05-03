@@ -1,4 +1,4 @@
-import { OrderEntity } from '@server/order/entities/Order.entity';
+import { OrderEntity } from '../../order/entities/Order.entity';
 import {
   EntitySubscriberInterface,
   EventSubscriber,

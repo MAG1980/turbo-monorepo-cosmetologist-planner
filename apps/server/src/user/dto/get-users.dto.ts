@@ -6,7 +6,7 @@ import {
   MaxLength,
 } from 'class-validator';
 
-export class GetClientsDto {
+export class GetUsersDto {
   @IsOptional()
   @IsNotEmpty()
   @MaxLength(10)

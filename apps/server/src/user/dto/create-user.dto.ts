@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { Exclude } from 'class-transformer';
 
-export class CreateClientDto {
+export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(5)
   @MaxLength(15)

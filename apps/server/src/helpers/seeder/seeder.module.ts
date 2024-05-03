@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ClientModule } from '@server/client/client.module';
+import { UserModule } from '@server/user/user.module';
 import { OrderModule } from '@server/order/order.module';
 import { ProcedureModule } from '@server/procedure/procedure.module';
 import { ReceptionModule } from '@server/reception/reception.module';
@@ -8,7 +8,7 @@ import { SeederService } from '@server/helpers/seeder/seeder.service';
 
 @Module({
   imports: [
-    ClientModule,
+    UserModule,
     OrderModule,
     ProcedureModule,
     ReceptionModule,

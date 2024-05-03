@@ -16,8 +16,8 @@ export class OrderEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: 'client_id' })
-  clientId!: number;
+  @Column({ name: 'user_id' })
+  userId!: number;
 
   @Column({
     type: 'enum',

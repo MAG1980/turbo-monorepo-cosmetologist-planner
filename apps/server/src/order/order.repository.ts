@@ -1,7 +1,7 @@
 import { OrderEntity } from '@server/order/entities/Order.entity';
 import { faker } from '@faker-js/faker';
 import { OrderStatus } from '@server/order/enums/OrderStatus.enum';
-import { ClientRepository } from '@server/client/client.repository';
+import { UserRepository } from '@server/user/user.repository';
 import { ReceptionRepository } from '@server/reception/reception.repository';
 import { ProcedureEntity } from '@server/procedure/entities/Procedure.entity';
 import { ProcedureRepository } from '@server/procedure/procedure.repository';
@@ -18,20 +18,20 @@ export class OrderRepository extends Repository<OrderEntity> {
   }
   async seed(
     ordersAmount: number = 15,
-    clientRepository: ClientRepository,
+    userRepository: UserRepository,
     receptionRepository: ReceptionRepository,
     procedureRepository: ProcedureRepository,
   ) {
     try {
       const orders: OrderEntity[] = [];
-      const clients = await clientRepository.findAllEntities();
+      const users = await userRepository.findAllEntities();
       let receptions = await receptionRepository.getAvailableReceptions();
       const procedures = await procedureRepository.find();
 
       for (let i = 0; i < ordersAmount; i++) {
         const order = new OrderEntity();
         order.status = faker.helpers.arrayElement(Object.values(OrderStatus));
-        order.clientId = faker.helpers.arrayElement(clients).id;
+        order.userId = faker.helpers.arrayElement(users).id;
         order.procedures = this.getRandomProcedures(procedures);
 
         const reception = faker.helpers.arrayElement(receptions);
@@ -70,9 +70,9 @@ export class OrderRepository extends Repository<OrderEntity> {
     );
   }
 
-  getOrdersByClient(id: number) {
+  getOrdersByUser(id: number) {
     return this.find({
-      where: { clientId: id },
+      where: { userId: id },
       relations: ['reception', 'procedures'],
     });
   }
@@ -82,16 +82,16 @@ export class OrderRepository extends Repository<OrderEntity> {
     return this.save(entity);
   }
 
-  findAllEntities(
+  async findAllEntities(
     getOrdersDto: GetOrdersDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const { clientId, status, date, timeInterval, procedureId } = getOrdersDto;
+    const { userId, status, date, timeInterval, procedureId } = getOrdersDto;
     const queryBuilder = this.createQueryBuilder('order')
       .leftJoin('order.procedures', 'procedure')
       .select([
         'order.id',
-        'order.client_id',
+        'order.user_id',
         'order.status',
         'order.reception_date',
         'order.reception_time_interval_id',
@@ -122,10 +122,10 @@ export class OrderRepository extends Repository<OrderEntity> {
       queryBuilder.andWhere('procedure.id = :procedureId', { procedureId });
     }
 
-    if (clientId) {
-      queryBuilder.andWhere('order.client_id = :clientId', { clientId });
+    if (userId) {
+      queryBuilder.andWhere('order.user_id = :userId', { userId });
     }
-    queryBuilder.getRawMany();
+    await queryBuilder.getRawMany();
 
     return paginate<OrderEntity>(queryBuilder, paginationOptions);
   }

@@ -16,12 +16,12 @@ export class OrderService {
     private readonly orderRepository: OrderRepository,
   ) {}
 
-  getOrdersByClient(id: number) {
-    return this.orderRepository.getOrdersByClient(id);
+  getOrdersByUser(id: number) {
+    return this.orderRepository.getOrdersByUser(id);
   }
 
   async create(createOrderDto: CreateOrderDto) {
-    const { clientId, date, timeIntervalId, procedureIds } = createOrderDto;
+    const { userId, date, timeIntervalId, procedureIds } = createOrderDto;
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -40,7 +40,7 @@ export class OrderService {
       };
 
       const order = queryRunner.manager.create(OrderEntity, {
-        clientId,
+        userId,
         procedures,
         reception,
       });
