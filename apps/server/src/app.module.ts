@@ -11,6 +11,7 @@ import { ProcedureModule } from './procedure/procedure.module';
 import { ClientModule } from './client/client.module';
 import { TimeIntervalModule } from '@server/time-interval/time-interval.module';
 import { SeederModule } from '@server/helpers/seeder/seeder.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { SeederModule } from '@server/helpers/seeder/seeder.module';
     ClientModule,
     TimeIntervalModule,
     SeederModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
