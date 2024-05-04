@@ -7,9 +7,9 @@ import {
   Post,
 } from '@nestjs/common';
 import { AuthService } from '@server/auth/auth.service';
-import { AuthCredentialsDto } from '@server/auth/dto/auth-credentials.dto';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { SignUpUserDto } from '@server/auth/dto/sign-up-user.dto';
+import { SignInUserDto } from '@server/auth/dto/sign-in-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -18,8 +18,8 @@ export class AuthController {
   @ApiExcludeEndpoint()
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')
-  signIn(@Body() authCredentialsDto: AuthCredentialsDto) {
-    return this.authService.signIn(authCredentialsDto);
+  signIn(@Body() signInUserDto: SignInUserDto) {
+    return this.authService.signIn(signInUserDto);
   }
 
   @Post('/sign-up')
