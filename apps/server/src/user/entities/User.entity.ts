@@ -1,7 +1,14 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { TokenEntity } from '../../auth/entities/token.entity';
 import { OrderEntity } from '../../order/entities/Order.entity';
 import { UserRoleEnum } from '../../user/enums/user-role.enum';
+import { genSaltSync, hashSync } from 'bcrypt';
 
 @Entity('users')
 export class UserEntity {
@@ -26,9 +33,19 @@ export class UserEntity {
   @OneToMany(() => TokenEntity, (token) => token.user)
   tokens!: TokenEntity[];
 
-  @Column({ type: 'enum', enum: UserRoleEnum, default: UserRoleEnum.USER })
-  roles!: UserRoleEnum;
+  @Column({
+    type: 'enum',
+    enum: UserRoleEnum,
+    array: true,
+    default: [UserRoleEnum.USER],
+  })
+  roles!: UserRoleEnum[];
 
-  @Column({ default: 'password' })
+  @Column({ default: 'password', select: false })
   password!: string;
+
+  @BeforeInsert()
+  hashPassword() {
+    this.password = hashSync(this.password, genSaltSync(10));
+  }
 }

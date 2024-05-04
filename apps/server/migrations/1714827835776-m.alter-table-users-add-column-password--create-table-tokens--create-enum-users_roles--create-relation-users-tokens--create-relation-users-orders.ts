@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class M1714825421065 implements MigrationInterface {
-  name = 'M1714825421065';
+export class M1714827835776 implements MigrationInterface {
+  name = 'M1714827835776';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -14,7 +14,7 @@ export class M1714825421065 implements MigrationInterface {
       `CREATE TYPE "public"."users_roles_enum" AS ENUM('USER', 'ADMIN', 'SUPER_ADMIN')`,
     );
     await queryRunner.query(
-      `ALTER TABLE "users" ADD "roles" "public"."users_roles_enum" NOT NULL DEFAULT 'USER'`,
+      `ALTER TABLE "users" ADD "roles" "public"."users_roles_enum" array NOT NULL DEFAULT ARRAY['USER']::"public"."users_roles_enum"[]`,
     );
     await queryRunner.query(
       `ALTER TABLE "users" ADD "password" varchar NOT NULL DEFAULT 'password'`,
