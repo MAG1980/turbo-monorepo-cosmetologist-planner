@@ -31,7 +31,7 @@ export class OrderRepository extends Repository<OrderEntity> {
       for (let i = 0; i < ordersAmount; i++) {
         const order = new OrderEntity();
         order.status = faker.helpers.arrayElement(Object.values(OrderStatus));
-        order.userId = faker.helpers.arrayElement(users).id;
+        order.user = faker.helpers.arrayElement(users);
         order.procedures = this.getRandomProcedures(procedures);
 
         const reception = faker.helpers.arrayElement(receptions);
@@ -72,7 +72,7 @@ export class OrderRepository extends Repository<OrderEntity> {
 
   getOrdersByUser(id: number) {
     return this.find({
-      where: { userId: id },
+      where: { user: { id } },
       relations: ['reception', 'procedures'],
     });
   }

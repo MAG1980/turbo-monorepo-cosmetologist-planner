@@ -40,7 +40,7 @@ export class OrderService {
       };
 
       const order = queryRunner.manager.create(OrderEntity, {
-        userId,
+        user: { id: userId },
         procedures,
         reception,
       });

@@ -4,20 +4,23 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ReceptionEntity } from '../../reception/entities/Reception.entity';
 import { OrderStatus } from '../enums/OrderStatus.enum';
 import { ProcedureEntity } from '../../procedure/entities/Procedure.entity';
+import { UserEntity } from '@server/user/entities/User.entity';
 
 @Entity({ name: 'orders' })
 export class OrderEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: 'user_id' })
-  userId!: number;
+  @ManyToOne(() => UserEntity, (user) => user.orders)
+  @JoinColumn({ name: 'user_id', foreignKeyConstraintName: 'fk_user_order' })
+  user!: UserEntity;
 
   @Column({
     type: 'enum',
