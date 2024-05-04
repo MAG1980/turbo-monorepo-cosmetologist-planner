@@ -11,7 +11,7 @@ import {
 import { ReceptionEntity } from '../../reception/entities/Reception.entity';
 import { OrderStatus } from '../enums/OrderStatus.enum';
 import { ProcedureEntity } from '../../procedure/entities/Procedure.entity';
-import { UserEntity } from '@server/user/entities/User.entity';
+import { UserEntity } from '../../user/entities/User.entity';
 
 @Entity({ name: 'orders' })
 export class OrderEntity {
@@ -19,7 +19,10 @@ export class OrderEntity {
   id!: number;
 
   @ManyToOne(() => UserEntity, (user) => user.orders)
-  @JoinColumn({ name: 'user_id', foreignKeyConstraintName: 'fk_user_order' })
+  @JoinColumn({
+    name: 'user_id',
+    foreignKeyConstraintName: 'fk_orders_user_id',
+  })
   user!: UserEntity;
 
   @Column({

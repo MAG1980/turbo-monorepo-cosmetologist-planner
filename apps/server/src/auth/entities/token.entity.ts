@@ -1,5 +1,5 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
-import { UserEntity } from '@server/user/entities/User.entity';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { UserEntity } from '../../user/entities/User.entity';
 
 @Entity('tokens')
 export class TokenEntity {
@@ -10,6 +10,9 @@ export class TokenEntity {
   expiration!: Date;
 
   @ManyToOne(() => UserEntity, (user) => user.tokens)
-  @Column({ name: 'user_id', type: 'bigint' })
+  @JoinColumn({
+    name: 'user_id',
+    foreignKeyConstraintName: 'fk_tokens_user_id',
+  })
   user!: UserEntity;
 }

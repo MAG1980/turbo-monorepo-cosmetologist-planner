@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { TokenEntity } from '@server/auth/entities/token.entity';
-import { OrderEntity } from '@server/order/entities/Order.entity';
-import { UserRoleEnum } from '@server/user/enums/user-role.enum';
+import { TokenEntity } from '../../auth/entities/token.entity';
+import { OrderEntity } from '../../order/entities/Order.entity';
+import { UserRoleEnum } from '../../user/enums/user-role.enum';
 
 @Entity('users')
 export class UserEntity {
@@ -28,4 +28,7 @@ export class UserEntity {
 
   @Column({ type: 'enum', enum: UserRoleEnum, default: UserRoleEnum.USER })
   roles!: UserRoleEnum;
+
+  @Column({ default: 'password' })
+  password!: string;
 }
