@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
 import { AuthService } from '@server/auth/auth.service';
 import { AuthCredentialsDto } from '@server/auth/dto/auth-credentials.dto';
 import { CreateUserDto } from '@server/user/dto/create-user.dto';
@@ -10,13 +17,16 @@ export class AuthController {
 
   @ApiExcludeEndpoint()
   @HttpCode(HttpStatus.OK)
-  @Post('login')
+  @Post('sign-in')
   signIn(@Body() authCredentialsDto: AuthCredentialsDto) {
     return this.authService.signIn(authCredentialsDto);
   }
 
-  @Post('/signup')
+  @Post('/sign-up')
   signUp(@Body() createUserDto: CreateUserDto) {
     return this.authService.signUp(createUserDto);
   }
+
+  @Get('refresh-token')
+  refreshTokens() {}
 }

@@ -1,11 +1,14 @@
 import {
+  IsArray,
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsPhoneNumber,
   MaxLength,
   MinLength,
 } from 'class-validator';
 import { Exclude } from 'class-transformer';
+import { UserRoleEnum } from '@server/user/enums/user-role.enum';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -25,6 +28,10 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsPhoneNumber('RU')
   phone!: string;
+
+  @IsArray()
+  @IsEnum(UserRoleEnum, { each: true })
+  roles!: UserRoleEnum[];
 
   @Exclude({ toPlainOnly: true })
   @IsNotEmpty()
