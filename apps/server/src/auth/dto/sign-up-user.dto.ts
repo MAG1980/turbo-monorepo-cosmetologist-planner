@@ -6,9 +6,11 @@ import {
   IsPhoneNumber,
   MaxLength,
   MinLength,
+  Validate,
 } from 'class-validator';
 import { Exclude } from 'class-transformer';
 import { UserRoleEnum } from '@server/user/enums/user-role.enum';
+import { IsPasswordMatchConstraint } from '@server/auth/decorators/is-password-match-constrain.decorator';
 
 export class SignUpUserDto {
   @IsNotEmpty()
@@ -38,4 +40,11 @@ export class SignUpUserDto {
   @MinLength(3)
   @MaxLength(15)
   readonly password!: string;
+
+  @Exclude({ toPlainOnly: true })
+  @IsNotEmpty()
+  @MinLength(3)
+  @MaxLength(15)
+  @Validate(IsPasswordMatchConstraint)
+  readonly passwordConfirm!: string;
 }
