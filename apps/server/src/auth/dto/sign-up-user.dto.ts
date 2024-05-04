@@ -10,7 +10,7 @@ import {
 import { Exclude } from 'class-transformer';
 import { UserRoleEnum } from '@server/user/enums/user-role.enum';
 
-export class CreateUserDto {
+export class SignUpUserDto {
   @IsNotEmpty()
   @MinLength(5)
   @MaxLength(15)

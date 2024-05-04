@@ -2,9 +2,9 @@ import { UserEntity } from '@server/user/entities/User.entity';
 import { faker } from '@faker-js/faker/locale/ru';
 import { DataSource, Repository } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDto } from '@server/user/dto/create-user.dto';
 import { UpdateUserDto } from '@server/user/dto/update-user.dto';
 import { GetUsersDto } from '@server/user/dto/get-users.dto';
+import { SignUpUserDto } from '@server/auth/dto/sign-up-user.dto';
 
 @Injectable()
 export class UserRepository extends Repository<UserEntity> {
@@ -31,8 +31,8 @@ export class UserRepository extends Repository<UserEntity> {
     }
   }
 
-  createEntity(createUserDto: CreateUserDto) {
-    const entity = this.create(createUserDto);
+  createEntity(signUpUserDto: SignUpUserDto) {
+    const entity = this.create(signUpUserDto);
     return this.save(entity);
   }
 

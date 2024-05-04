@@ -8,8 +8,8 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '@server/auth/auth.service';
 import { AuthCredentialsDto } from '@server/auth/dto/auth-credentials.dto';
-import { CreateUserDto } from '@server/user/dto/create-user.dto';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
+import { SignUpUserDto } from '@server/auth/dto/sign-up-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -23,8 +23,8 @@ export class AuthController {
   }
 
   @Post('/sign-up')
-  signUp(@Body() createUserDto: CreateUserDto) {
-    return this.authService.signUp(createUserDto);
+  signUp(@Body() signUpUserDto: SignUpUserDto) {
+    return this.authService.signUp(signUpUserDto);
   }
 
   @Get('refresh-token')
