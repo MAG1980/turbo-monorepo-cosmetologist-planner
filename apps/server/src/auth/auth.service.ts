@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { AuthRepository } from '@server/auth/auth.repository';
 import { UserService } from '@server/user/user.service';
-import { SignUpUserDto } from '@server/auth/dto/sign-up-user.dto';
-import { SignInUserDto } from '@server/auth/dto/sign-in-user.dto';
+import { SignInUserDto, SignUpUserDto } from '@server/auth/dto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly userService: UserService,
@@ -16,6 +16,9 @@ export class AuthService {
   }
 
   async signUp(signUpUserDto: SignUpUserDto) {
-    return await this.userService.create(signUpUserDto);
+    return await this.userService.create(signUpUserDto).catch((error) => {
+      this.logger.error(error);
+      return null;
+    });
   }
 }
