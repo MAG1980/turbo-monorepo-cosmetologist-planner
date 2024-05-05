@@ -2,9 +2,8 @@ import { UserEntity } from '@server/user/entities/User.entity';
 import { faker } from '@faker-js/faker/locale/ru';
 import { DataSource, Repository } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateUserDto } from '@server/user/dto/update-user.dto';
-import { GetUsersDto } from '@server/user/dto/get-users.dto';
-import { SignUpUserDto } from '@server/auth/dto/sign-up-user.dto';
+import { SignUpUserDto } from '@server/auth/dto';
+import { GetUsersDto, UpdateUserDto } from '@server/user/dto';
 
 @Injectable()
 export class UserRepository extends Repository<UserEntity> {

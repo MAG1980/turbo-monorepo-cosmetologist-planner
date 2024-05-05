@@ -8,8 +8,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '@server/auth/auth.service';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
-import { SignUpUserDto } from '@server/auth/dto/sign-up-user.dto';
-import { SignInUserDto } from '@server/auth/dto/sign-in-user.dto';
+import { SignInUserDto, SignUpUserDto } from '@server/auth/dto';
 
 @Controller('auth')
 export class AuthController {

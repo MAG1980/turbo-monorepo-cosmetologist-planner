@@ -7,9 +7,8 @@ import { ProcedureEntity } from '@server/procedure/entities/Procedure.entity';
 import { ProcedureRepository } from '@server/procedure/procedure.repository';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { UpdateOrderDto } from '@server/order/dto/update-order.dto';
-import { GetOrdersDto } from '@server/order/dto/get-orders.dto';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
+import { GetOrdersDto, UpdateOrderDto } from '@server/order/dto';
 
 @Injectable()
 export class OrderRepository extends Repository<OrderEntity> {

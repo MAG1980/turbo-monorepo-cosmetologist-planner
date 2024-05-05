@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { OrderRepository } from '@server/order/order.repository';
-import { CreateOrderDto } from '@server/order/dto/create-order.dto';
-import { UpdateOrderDto } from '@server/order/dto/update-order.dto';
 import { OrderEntity } from '@server/order/entities/Order.entity';
 import { ReceptionEntity } from '@server/reception/entities/Reception.entity';
 import { DataSource, In } from 'typeorm';
 import { ProcedureEntity } from '@server/procedure/entities/Procedure.entity';
-import { GetOrdersDto } from '@server/order/dto/get-orders.dto';
 import { IPaginationOptions } from 'nestjs-typeorm-paginate';
+import {
+  CreateOrderDto,
+  GetOrdersDto,
+  UpdateOrderDto,
+} from '@server/order/dto';
 
 @Injectable()
 export class OrderService {

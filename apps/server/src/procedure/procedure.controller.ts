@@ -12,9 +12,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { ProcedureService } from '@server/procedure/procedure.service';
-import { GetProceduresDto } from '@server/procedure/dto/get-procedures.dto';
-import { CreateProcedureDto } from '@server/procedure/dto/create-procedure.dto';
-import { UpdateProcedureDto } from '@server/procedure/dto/update-procedure.dto';
+import {
+  CreateProcedureDto,
+  GetProceduresDto,
+  UpdateProcedureDto,
+} from '@server/procedure/dto';
 
 @Controller('procedures')
 export class ProcedureController {

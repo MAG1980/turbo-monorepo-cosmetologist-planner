@@ -3,9 +3,11 @@ import { ProcedureEnum } from '@server/procedure/enums/Procedure.enum';
 import { faker } from '@faker-js/faker';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { GetProceduresDto } from '@server/procedure/dto/get-procedures.dto';
-import { UpdateProcedureDto } from '@server/procedure/dto/update-procedure.dto';
-import { CreateProcedureDto } from '@server/procedure/dto/create-procedure.dto';
+import {
+  CreateProcedureDto,
+  GetProceduresDto,
+  UpdateProcedureDto,
+} from '@server/procedure/dto';
 
 @Injectable()
 export class ProcedureRepository extends Repository<ProcedureEntity> {

@@ -15,12 +15,14 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { OrderService } from '@server/order/order.service';
-import { CreateOrderDto } from '@server/order/dto/create-order.dto';
-import { UpdateOrderDto } from '@server/order/dto/update-order.dto';
-import { GetOrdersDto } from '@server/order/dto/get-orders.dto';
 import { GetOrdersDtoTransformPipe } from '@server/order/pipes/getOrdersDtoTransform.pipe';
 import { config } from 'dotenv';
 import * as process from 'node:process';
+import {
+  CreateOrderDto,
+  GetOrdersDto,
+  UpdateOrderDto,
+} from '@server/order/dto';
 
 config({ path: '../../.env' });
 

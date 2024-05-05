@@ -12,9 +12,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { ReceptionService } from '@server/reception/reception.service';
-import { GetReceptionsDto } from '@server/reception/dto/get-receptions.dto';
-import { CreateReceptionDto } from '@server/reception/dto/create-reception.dto';
-import { UpdateReceptionDto } from '@server/reception/dto/update-reception.dto';
+import {
+  CreateReceptionDto,
+  GetReceptionsDto,
+  UpdateReceptionDto,
+} from '@server/reception/dto';
 
 @Controller('receptions')
 export class ReceptionController {

@@ -11,8 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { UserService } from '@server/user/user.service';
-import { UpdateUserDto } from '@server/user/dto/update-user.dto';
-import { GetUsersDto } from '@server/user/dto/get-users.dto';
+import { GetUsersDto, UpdateUserDto } from '@server/user/dto';
 
 @Controller('users')
 export class UserController {

@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ReceptionRepository } from '@server/reception/reception.repository';
-import { CreateReceptionDto } from '@server/reception/dto/create-reception.dto';
-import { GetReceptionsDto } from '@server/reception/dto/get-receptions.dto';
-import { UpdateReceptionDto } from '@server/reception/dto/update-reception.dto';
+import {
+  CreateReceptionDto,
+  GetReceptionsDto,
+  UpdateReceptionDto,
+} from '@server/reception/dto';
 
 @Injectable()
 export class ReceptionService {

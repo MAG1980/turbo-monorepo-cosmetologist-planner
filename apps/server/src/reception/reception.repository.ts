@@ -3,9 +3,11 @@ import { TimeIntervalRepository } from '@server/time-interval/time-interval.repo
 import moment from 'moment-timezone';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { CreateReceptionDto } from '@server/reception/dto/create-reception.dto';
-import { GetReceptionsDto } from '@server/reception/dto/get-receptions.dto';
-import { UpdateReceptionDto } from '@server/reception/dto/update-reception.dto';
+import {
+  CreateReceptionDto,
+  GetReceptionsDto,
+  UpdateReceptionDto,
+} from '@server/reception/dto';
 
 @Injectable()
 export class ReceptionRepository extends Repository<ReceptionEntity> {
