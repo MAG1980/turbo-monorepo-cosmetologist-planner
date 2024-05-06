@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -7,25 +8,42 @@ import {
   Post,
 } from '@nestjs/common';
 import { AuthService } from '@server/auth/auth.service';
-import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { SignInUserDto, SignUpUserDto } from '@server/auth/dto';
+
+import { REFRESH_TOKEN } from '@server/config';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @ApiExcludeEndpoint()
-  @HttpCode(HttpStatus.OK)
-  @Post('sign-in')
-  signIn(@Body() signInUserDto: SignInUserDto) {
-    return this.authService.signIn(signInUserDto);
+  @Post('/sign-up')
+  async signUp(@Body() signUpUserDto: SignUpUserDto) {
+    const user = await this.authService.signUp(signUpUserDto);
+    if (!user) {
+      throw new BadRequestException(
+        `Не удаётся зарегистрировать пользователя с данными ${JSON.stringify(
+          signUpUserDto,
+        )}`,
+      );
+    }
   }
 
-  @Post('/sign-up')
-  signUp(@Body() signUpUserDto: SignUpUserDto) {
-    return this.authService.signUp(signUpUserDto);
+  @HttpCode(HttpStatus.OK)
+  @Post('sign-in')
+  async signIn(@Body() signInUserDto: SignInUserDto) {
+    const token = await this.authService.signIn(signInUserDto);
+    if (!token) {
+      throw new BadRequestException(
+        `Не удаётся авторизовать пользователя с данными ${JSON.stringify(
+          signInUserDto,
+        )}`,
+      );
+    }
+    return { accessToken: token.accessToken };
   }
 
   @Get('refresh-token')
-  refreshTokens() {}
+  refreshTokens() {
+    return { refreshToken: REFRESH_TOKEN };
+  }
 }

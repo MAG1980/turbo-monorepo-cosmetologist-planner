@@ -1,19 +1,43 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
+import { TokenEntity } from '@server/auth/entities/token.entity';
+import { v4 } from 'uuid';
+import moment from 'moment-timezone';
+import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from '@server/user/entities/User.entity';
-import { SignInUserDto } from '@server/auth/dto/sign-in-user.dto';
-import { SignUpUserDto } from '@server/auth/dto/sign-up-user.dto';
+import { SignInUserDto } from '@server/auth/dto';
+import { compareSync } from 'bcrypt';
 
 @Injectable()
-export class AuthRepository extends Repository<UserEntity> {
-  constructor(private readonly dataSource: DataSource) {
-    super(UserEntity, dataSource.createEntityManager());
+export class AuthRepository extends Repository<TokenEntity> {
+  constructor(
+    datasource: DataSource,
+    private readonly jwtService: JwtService,
+  ) {
+    super(TokenEntity, datasource.createEntityManager());
   }
-  async signIn(signInUserDto: SignInUserDto) {
-    console.log(signInUserDto);
+
+  isPasswordMatch(signInUserDto: SignInUserDto, user: UserEntity) {
+    return compareSync(signInUserDto.password, user.password);
   }
-  async signUp(signUpUserDto: SignUpUserDto) {
-    const user = this.create(signUpUserDto);
-    await this.save(user);
+  async getAccessToken(user: UserEntity) {
+    return (
+      'Bearer ' +
+      (await this.jwtService.signAsync({
+        //sub субъект JWT – пользователь, который запросил токен, обычно адрес электронной почты.
+        sub: user.id,
+        email: user.email,
+        roles: user.roles,
+      }))
+    );
+  }
+  async getRefreshToken(userId: number) {
+    const refreshToken = this.create({
+      token: v4(),
+      expiration: moment().add(30, 'days').format('MM/DD/YYYY'),
+      user: { id: userId },
+    });
+
+    return await this.save(refreshToken);
   }
 }
