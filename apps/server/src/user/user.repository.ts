@@ -73,9 +73,13 @@ export class UserRepository extends Repository<UserEntity> {
   }
 
   getUserWithPasswordByLogin(login: string) {
-    return this.findOne({
-      where: { login },
-      select: ['id', 'login', 'name', 'email', 'phone', 'roles'],
-    });
+    return (
+      this.createQueryBuilder('user')
+        //Для извлечения скрытых данных из таблицы, нужно использовать .addSelect()
+        //Остальные столбцы таблицы автоматически добавятся в SELECT SQL запроса
+        .addSelect('user.password')
+        .where('user.login = :login', { login })
+        .getOne()
+    );
   }
 }
