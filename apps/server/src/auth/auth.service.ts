@@ -38,10 +38,7 @@ export class AuthService {
   async signIn(signInUserDto: SignInUserDto): Promise<Token> {
     console.log('signInUserDto ', signInUserDto);
     const user = await this.userRepository
-      .findOne({
-        where: { login: signInUserDto.login },
-        select: ['id', 'login', 'name', 'email', 'phone', 'roles', 'password'],
-      })
+      .getUserWithPasswordByLogin(signInUserDto.login)
       .catch((error) => {
         this.logger.error(error);
         return null;

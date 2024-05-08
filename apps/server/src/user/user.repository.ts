@@ -71,4 +71,11 @@ export class UserRepository extends Repository<UserEntity> {
   removeEntity(id: number) {
     return this.delete(id);
   }
+
+  getUserWithPasswordByLogin(login: string) {
+    return this.findOne({
+      where: { login },
+      select: ['id', 'login', 'name', 'email', 'phone', 'roles'],
+    });
+  }
 }
