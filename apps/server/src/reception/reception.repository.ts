@@ -28,7 +28,7 @@ export class ReceptionRepository extends Repository<ReceptionEntity> {
 
       for (const timeInterval of timeIntervals) {
         const reception = new ReceptionEntity();
-        reception.date = date;
+        reception.date = new Date(date);
         reception.timeInterval = timeInterval.id;
         receptions.push(reception);
       }
@@ -105,7 +105,8 @@ export class ReceptionRepository extends Repository<ReceptionEntity> {
 
   async findOneEntity(date: string, timeInterval: number) {
     const reception = await this.findOne({
-      where: { date: moment(date).format('YYYY-MM-DD'), timeInterval },
+      // where: { date: moment(date).format('YYYY-MM-DD'), timeInterval },
+      where: { date: new Date(date), timeInterval },
     });
     if (!reception) {
       throw new NotFoundException('Reception not found');
