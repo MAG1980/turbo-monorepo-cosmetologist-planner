@@ -10,6 +10,7 @@ export class UserRepository extends Repository<UserEntity> {
   constructor(private readonly dataSource: DataSource) {
     super(UserEntity, dataSource.createEntityManager());
   }
+
   async seed(usersAmount: number = 5) {
     const users: UserEntity[] = [];
 
@@ -80,6 +81,15 @@ export class UserRepository extends Repository<UserEntity> {
         .addSelect('user.password')
         .where('user.login = :login', { login })
         .getOne()
+    );
+  }
+
+  async isUserExists(login: string) {
+    return (
+      (await this.createQueryBuilder('user')
+        .select('user.login')
+        .where('user.login = :login', { login })
+        .getOne()) !== null
     );
   }
 }

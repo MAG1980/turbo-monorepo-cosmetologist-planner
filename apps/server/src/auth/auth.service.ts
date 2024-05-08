@@ -18,12 +18,9 @@ export class AuthService {
   ) {}
 
   async signUp(signUpUserDto: SignUpUserDto) {
-    const user = await this.userRepository.findOne({
-      where: { login: signUpUserDto.login },
-    });
-    if (user) {
+    if (await this.userRepository.isUserExists(signUpUserDto.login)) {
       throw new ConflictException(
-        'Пользователь с таким логином уже существует',
+        `Пользователь с логином ${signUpUserDto.login} уже существует`,
       );
     }
 
