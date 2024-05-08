@@ -6,10 +6,12 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Res,
+  UnauthorizedException,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { AuthService } from '@server/auth/auth.service';
 import { SignInUserDto, SignUpUserDto } from '@server/auth/dto';
-
 import { REFRESH_TOKEN } from '@server/config';
 
 @Controller('auth')
@@ -30,16 +32,19 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')
-  async signIn(@Body() signInUserDto: SignInUserDto) {
+  async signIn(
+    @Body() signInUserDto: SignInUserDto,
+    @Res() response: Response,
+  ) {
     const token = await this.authService.signIn(signInUserDto);
     if (!token) {
-      throw new BadRequestException(
+      throw new UnauthorizedException(
         `Не удаётся авторизовать пользователя с данными ${JSON.stringify(
           signInUserDto,
         )}`,
       );
     }
-    return { accessToken: token.accessToken };
+    this.authService.setRefreshTokenHttpOnlyCookie(response, token);
   }
 
   @Get('refresh-token')

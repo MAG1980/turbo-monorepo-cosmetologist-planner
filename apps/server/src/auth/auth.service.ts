@@ -1,13 +1,18 @@
 import {
   ConflictException,
+  HttpStatus,
   Injectable,
   Logger,
+  Res,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthRepository } from '@server/auth/auth.repository';
 import { SignInUserDto, SignUpUserDto } from '@server/auth/dto';
-import { Token } from '@server/auth/interfaces';
+import type { Token } from '@server/auth/interfaces';
 import { UserRepository } from '@server/user/user.repository';
+import type { Response } from 'express';
+import { REFRESH_TOKEN } from '@server/config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +20,7 @@ export class AuthService {
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly userRepository: UserRepository,
+    private readonly configService: ConfigService,
   ) {}
 
   async signUp(signUpUserDto: SignUpUserDto) {
@@ -49,5 +55,28 @@ export class AuthService {
 
     //Сообщать о том, что именно пароль не прошёл проверку - "дыра" в безопасности
     throw new UnauthorizedException('Неверный логин или пароль!');
+  }
+
+  setRefreshTokenHttpOnlyCookie(@Res() response: Response, token: Token) {
+    if (!token) {
+      throw new UnauthorizedException();
+    }
+    response.cookie(REFRESH_TOKEN, token.refreshToken.token, {
+      //Делает cookie (token) недоступным в клиентской части через JavaScript
+      httpOnly: true,
+      //Позволяет использовать куки только для текущего домена
+      sameSite: 'lax',
+      //Позволяет использовать куки на всех страницах текущего домена
+      path: '/',
+      //Позволяет использовать куки только для HTTPS
+      secure: this.isProductionMode(),
+      expires: new Date(token.refreshToken.expiration),
+    });
+
+    response.status(HttpStatus.OK).json({ accessToken: token.accessToken });
+  }
+
+  private isProductionMode() {
+    return this.configService.get('NODE_ENV') === 'production';
   }
 }
