@@ -4,11 +4,13 @@ import { TrpcRouter } from '@server/trpc/trpc.router';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { config } from 'dotenv';
+import cookieParser from 'cookie-parser';
 
 config({ path: '../../.env' });
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(cookieParser());
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
   const trpcRouter = app.get(TrpcRouter);

@@ -13,14 +13,15 @@ import { UserRepository } from '@server/user/user.repository';
 import type { Response } from 'express';
 import { REFRESH_TOKEN } from '@server/config';
 import { ConfigService } from '@nestjs/config';
+import { UserEntity } from '@server/user/entities/User.entity';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   constructor(
+    private readonly configService: ConfigService,
     private readonly authRepository: AuthRepository,
     private readonly userRepository: UserRepository,
-    private readonly configService: ConfigService,
   ) {}
 
   async signUp(signUpUserDto: SignUpUserDto) {
@@ -48,9 +49,7 @@ export class AuthService {
       });
 
     if (user && this.authRepository.isPasswordMatch(signInUserDto, user)) {
-      const accessToken = await this.authRepository.getAccessToken(user);
-      const refreshToken = await this.authRepository.getRefreshToken(user.id);
-      return { accessToken, refreshToken };
+      return await this.generateTokens(user);
     }
 
     //Сообщать о том, что именно пароль не прошёл проверку - "дыра" в безопасности
@@ -78,5 +77,32 @@ export class AuthService {
 
   private isProductionMode() {
     return this.configService.get('NODE_ENV') === 'production';
+  }
+
+  async refreshTokens(refreshToken: string) {
+    const token = await this.authRepository.findOne({
+      where: { token: refreshToken },
+    });
+
+    if (!token) {
+      throw new UnauthorizedException();
+    }
+
+    await this.authRepository.delete({ token: refreshToken });
+    const user = await this.userRepository.findOne({
+      where: { id: token.userId },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    return await this.generateTokens(user);
+  }
+
+  private async generateTokens(user: UserEntity): Promise<Token> {
+    const accessToken = await this.authRepository.getAccessToken(user);
+    const refreshToken = await this.authRepository.getRefreshToken(user.id);
+    return { accessToken, refreshToken };
   }
 }

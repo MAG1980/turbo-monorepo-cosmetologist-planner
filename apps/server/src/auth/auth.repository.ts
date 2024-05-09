@@ -40,4 +40,14 @@ export class AuthRepository extends Repository<TokenEntity> {
 
     return await this.save(refreshToken);
   }
+
+  async isTokenValid(token: string) {
+    const tokenEntity = await this.findOne({ where: { token } });
+    if (tokenEntity) {
+      if (moment().isBefore(tokenEntity.expiration)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

@@ -13,6 +13,7 @@ import type { Response } from 'express';
 import { AuthService } from '@server/auth/auth.service';
 import { SignInUserDto, SignUpUserDto } from '@server/auth/dto';
 import { REFRESH_TOKEN } from '@server/config';
+import { Cookie } from '@server/auth/decorators';
 
 @Controller('auth')
 export class AuthController {
@@ -48,7 +49,20 @@ export class AuthController {
   }
 
   @Get('refresh-token')
-  refreshTokens() {
-    return { refreshToken: REFRESH_TOKEN };
+  async refreshTokens(
+    @Cookie(REFRESH_TOKEN) refreshToken: string,
+    @Res() response: Response,
+  ) {
+    if (!refreshToken) {
+      throw new UnauthorizedException();
+    }
+
+    const tokens = await this.authService.refreshTokens(refreshToken);
+    if (!tokens) {
+      throw new UnauthorizedException();
+    }
+
+    this.authService.setRefreshTokenHttpOnlyCookie(response, tokens);
+    // return { refreshToken: REFRESH_TOKEN };
   }
 }

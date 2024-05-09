@@ -15,4 +15,7 @@ export class TokenEntity {
     foreignKeyConstraintName: 'fk_tokens_user_id',
   })
   user!: UserEntity;
+
+  @Column({ name: 'user_id' })
+  userId!: number;
 }
