@@ -30,7 +30,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "to-ts-node": "npx typeorm-ts-node-esm -d ./src/config/dataSource.ts",
-    "mg:run": "pnpm run to-ts-node migration:run",
+    "mg:run": "pnpm run to-ts-node migration:run --transaction each",
     "mg:gen": "pnpm run to-ts-node migration:generate ./migrations/m",
     "mg:rev": "pnpm run to-ts-node migration:revert",
     "mg:cr": "typeorm migration:create ./migrations/created_migration",
