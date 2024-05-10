@@ -1,7 +1,15 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  Unique,
+} from 'typeorm';
 import { UserEntity } from '../../user/entities/User.entity';
 
 @Entity('tokens')
+@Unique('UQ_tokens_userId_userAgent', ['userId', 'userAgent'])
 export class TokenEntity {
   @PrimaryColumn()
   token!: string;

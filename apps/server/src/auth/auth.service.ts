@@ -40,8 +40,8 @@ export class AuthService {
       });
   }
 
-  async signIn(signInUserDto: SignInUserDto): Promise<Token> {
-    console.log('signInUserDto ', signInUserDto);
+  async signIn(signInUserDto: SignInUserDto, agent: string): Promise<Token> {
+    console.log('signInUserDto ', signInUserDto, { agent });
     const user = await this.userRepository
       .getUserWithPasswordByLogin(signInUserDto.login)
       .catch((error) => {
@@ -50,7 +50,7 @@ export class AuthService {
       });
 
     if (user && this.authRepository.isPasswordMatch(signInUserDto, user)) {
-      return await this.generateTokens(user);
+      return await this.generateTokens(user, agent);
     }
 
     //Сообщать о том, что именно пароль не прошёл проверку - "дыра" в безопасности
@@ -80,7 +80,7 @@ export class AuthService {
     return this.configService.get('NODE_ENV') === 'production';
   }
 
-  async refreshTokens(refreshToken: string) {
+  async refreshTokens(refreshToken: string, agent: string) {
     const token = await this.authRepository.findOne({
       where: { token: refreshToken },
     });
@@ -103,12 +103,18 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    return await this.generateTokens(user);
+    return await this.generateTokens(user, agent);
   }
 
-  private async generateTokens(user: UserEntity): Promise<Token> {
+  private async generateTokens(
+    user: UserEntity,
+    agent: string,
+  ): Promise<Token> {
     const accessToken = await this.authRepository.getAccessToken(user);
-    const refreshToken = await this.authRepository.getRefreshToken(user.id);
+    const refreshToken = await this.authRepository.getRefreshToken(
+      user.id,
+      agent,
+    );
     return { accessToken, refreshToken };
   }
 }

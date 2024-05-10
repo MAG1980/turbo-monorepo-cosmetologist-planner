@@ -38,7 +38,7 @@ export class AuthController {
     @Res() response: Response,
     @UserAgent() agent: string,
   ) {
-    const token = await this.authService.signIn(signInUserDto);
+    const token = await this.authService.signIn(signInUserDto, agent);
 
     console.log({ agent });
     if (!token) {
@@ -55,12 +55,13 @@ export class AuthController {
   async refreshTokens(
     @Cookie(REFRESH_TOKEN) refreshToken: string,
     @Res() response: Response,
+    @UserAgent() agent: string,
   ) {
     if (!refreshToken) {
       throw new UnauthorizedException();
     }
 
-    const tokens = await this.authService.refreshTokens(refreshToken);
+    const tokens = await this.authService.refreshTokens(refreshToken, agent);
     if (!tokens) {
       throw new UnauthorizedException();
     }

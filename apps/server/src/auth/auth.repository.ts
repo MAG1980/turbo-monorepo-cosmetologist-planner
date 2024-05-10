@@ -31,14 +31,16 @@ export class AuthRepository extends Repository<TokenEntity> {
       }))
     );
   }
-  async getRefreshToken(userId: number) {
+  async getRefreshToken(userId: number, userAgent: string) {
     const refreshToken = this.create({
       token: v4(),
       expiration: moment().add(30, 'days').format('MM/DD/YYYY'),
       user: { id: userId },
+      userAgent,
     });
-
-    return await this.save(refreshToken);
+    const upsert = await this.upsert(refreshToken, ['userId', 'userAgent']);
+    console.log({ upsert });
+    return refreshToken;
   }
 
   async isTokenValid(token: string) {
