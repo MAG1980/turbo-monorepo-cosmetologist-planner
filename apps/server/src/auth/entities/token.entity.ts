@@ -18,4 +18,7 @@ export class TokenEntity {
 
   @Column({ name: 'user_id' })
   userId!: number;
+
+  @Column({ name: 'user_agent' })
+  userAgent!: string;
 }

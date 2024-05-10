@@ -13,7 +13,7 @@ import type { Response } from 'express';
 import { AuthService } from '@server/auth/auth.service';
 import { SignInUserDto, SignUpUserDto } from '@server/auth/dto';
 import { REFRESH_TOKEN } from '@server/config';
-import { Cookie } from '@server/auth/decorators';
+import { Cookie, UserAgent } from '@server/auth/decorators';
 
 @Controller('auth')
 export class AuthController {
@@ -36,8 +36,11 @@ export class AuthController {
   async signIn(
     @Body() signInUserDto: SignInUserDto,
     @Res() response: Response,
+    @UserAgent() agent: string,
   ) {
     const token = await this.authService.signIn(signInUserDto);
+
+    console.log({ agent });
     if (!token) {
       throw new UnauthorizedException(
         `Не удаётся авторизовать пользователя с данными ${JSON.stringify(
