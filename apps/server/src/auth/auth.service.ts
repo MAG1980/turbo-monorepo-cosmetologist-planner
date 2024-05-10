@@ -14,6 +14,7 @@ import type { Response } from 'express';
 import { REFRESH_TOKEN } from '@server/config';
 import { ConfigService } from '@nestjs/config';
 import { UserEntity } from '@server/user/entities/User.entity';
+import moment from 'moment-timezone';
 
 @Injectable()
 export class AuthService {
@@ -89,6 +90,11 @@ export class AuthService {
     }
 
     await this.authRepository.delete({ token: refreshToken });
+
+    if (moment().isAfter(token.expiration)) {
+      throw new UnauthorizedException();
+    }
+
     const user = await this.userRepository.findOne({
       where: { id: token.userId },
     });
