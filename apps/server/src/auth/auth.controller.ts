@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   HttpCode,
@@ -8,18 +9,21 @@ import {
   Post,
   Res,
   UnauthorizedException,
+  UseInterceptors,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthService } from '@server/auth/auth.service';
 import { SignInUserDto, SignUpUserDto } from '@server/auth/dto';
 import { REFRESH_TOKEN } from '@server/config';
 import { Cookie, Public, UserAgent } from '@server/auth/decorators';
+import { UserResponse } from '@server/user/responses';
 
 @Public()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post('/sign-up')
   async signUp(@Body() signUpUserDto: SignUpUserDto) {
     const user = await this.authService.signUp(signUpUserDto);
@@ -30,6 +34,8 @@ export class AuthController {
         )}`,
       );
     }
+
+    return new UserResponse(user);
   }
 
   @HttpCode(HttpStatus.OK)
