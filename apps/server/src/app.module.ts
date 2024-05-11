@@ -12,6 +12,8 @@ import { UserModule } from './user/user.module';
 import { TimeIntervalModule } from '@server/time-interval/time-interval.module';
 import { SeederModule } from '@server/helpers/seeder/seeder.module';
 import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from '@server/auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -33,7 +35,13 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}
 // console.log('dataSourceOptions: ', dataSourceOptions())

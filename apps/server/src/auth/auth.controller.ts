@@ -13,8 +13,9 @@ import type { Response } from 'express';
 import { AuthService } from '@server/auth/auth.service';
 import { SignInUserDto, SignUpUserDto } from '@server/auth/dto';
 import { REFRESH_TOKEN } from '@server/config';
-import { Cookie, UserAgent } from '@server/auth/decorators';
+import { Cookie, Public, UserAgent } from '@server/auth/decorators';
 
+@Public()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
