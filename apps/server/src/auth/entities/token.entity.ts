@@ -17,7 +17,9 @@ export class TokenEntity {
   @Column({ type: 'timestamptz' })
   expiration!: Date;
 
-  @ManyToOne(() => UserEntity, (user) => user.tokens)
+  @ManyToOne(() => UserEntity, (user) => user.tokens, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({
     name: 'user_id',
     foreignKeyConstraintName: 'fk_tokens_user_id',

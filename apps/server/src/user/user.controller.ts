@@ -16,6 +16,8 @@ import { UserService } from '@server/user/user.service';
 import { GetUsersDto, UpdateUserDto } from '@server/user/dto';
 import { UserResponse } from '@server/user/responses';
 import { UserEntity } from '@server/user/entities/User.entity';
+import { CurrentUser } from '@server/auth/decorators';
+import type { JwtPayload } from '@server/auth/interfaces';
 
 @Controller('users')
 export class UserController {
@@ -43,7 +45,10 @@ export class UserController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.remove(id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    return this.userService.remove(id, user);
   }
 }
