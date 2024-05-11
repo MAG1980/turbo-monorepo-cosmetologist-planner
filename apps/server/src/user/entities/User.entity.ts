@@ -41,7 +41,7 @@ export class UserEntity {
   })
   roles!: UserRoleEnum[];
 
-  @Column({ default: 'password' })
+  @Column({ default: 'password', select: false })
   password!: string;
 
   @BeforeInsert()
