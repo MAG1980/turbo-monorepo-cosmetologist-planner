@@ -76,4 +76,24 @@ export class AuthController {
     this.authService.setRefreshTokenHttpOnlyCookie(response, tokens);
     // return { refreshToken: REFRESH_TOKEN };
   }
+
+  @Post('sign-out')
+  async signOut(
+    @Cookie(REFRESH_TOKEN) refreshToken: string,
+    @Res() response: Response,
+  ) {
+    if (!refreshToken) {
+      return response
+        .sendStatus(HttpStatus.OK)
+        .json({ message: 'Вы вышли из системы' });
+    }
+    await this.authService.deleteRefreshToken(refreshToken);
+    // response.clearCookie(REFRESH_TOKEN);
+    response.cookie(REFRESH_TOKEN, '', {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(),
+    });
+    response.status(HttpStatus.OK).json({ message: 'Вы вышли из системы' });
+  }
 }

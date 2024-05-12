@@ -117,4 +117,8 @@ export class AuthService {
     );
     return { accessToken, refreshToken };
   }
+
+  deleteRefreshToken(refreshToken: string) {
+    return this.authRepository.delete({ token: refreshToken });
+  }
 }
