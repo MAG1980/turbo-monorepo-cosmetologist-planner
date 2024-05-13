@@ -10,18 +10,28 @@ import {
   ParseIntPipe,
   Patch,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from '@server/user/user.service';
 import { GetUsersDto, UpdateUserDto } from '@server/user/dto';
 import { UserResponse } from '@server/user/responses';
 import { UserEntity } from '@server/user/entities/User.entity';
-import { CurrentUser } from '@server/auth/decorators';
+import { CurrentUser, Roles } from '@server/auth/decorators';
 import type { JwtPayload } from '@server/auth/interfaces';
+import { RolesGuard } from '@server/auth/guards/roles.guard';
+import { UserRoleEnum } from '@server/user/enums/user-role.enum';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @UseGuards(RolesGuard)
+  @Roles([UserRoleEnum.ADMIN])
+  @Get('/me')
+  async me(@CurrentUser() user: JwtPayload) {
+    return user;
+  }
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   async findAll(@Query() getUsersDto: GetUsersDto) {

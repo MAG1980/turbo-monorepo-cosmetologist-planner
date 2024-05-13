@@ -3,3 +3,4 @@ export { Cookie } from './cookie.decorator';
 export { UserAgent } from './user-agent.decorator';
 export { Public, isPublic } from './public.decorator';
 export { CurrentUser } from './current-user.decorator';
+export { Roles } from './roles.decorator';
