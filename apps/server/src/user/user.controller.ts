@@ -27,7 +27,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @UseGuards(RolesGuard)
-  @Roles([UserRoleEnum.ADMIN])
+  @Roles(UserRoleEnum.ADMIN)
   @Get('/me')
   async me(@CurrentUser() user: JwtPayload) {
     return user;
