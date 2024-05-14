@@ -12,12 +12,15 @@ import { UserRoleEnum } from '@server/user/enums/user-role.enum';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { UserEntity } from '@server/user/entities/User.entity';
+import { ConfigService } from '@nestjs/config';
+import { convertToMilliseconds } from '@server/common/utils';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    private readonly configService: ConfigService,
   ) {}
 
   create(signUpUserDto: SignUpUserDto) {
@@ -37,7 +40,12 @@ export class UserService {
       if (!user) {
         throw new NotFoundException(`User with ID = ${id} is not found!`);
       }
-      await this.cacheManager.set(`user_${id}`, user, 60 * 60 * 1000);
+
+      const ttl = convertToMilliseconds(
+        this.configService.get<string>('JWT_EXPIRATION'),
+      );
+
+      await this.cacheManager.set(`user_${id}`, user, ttl);
       console.log(`User_${id} from database`);
       return user;
     }
