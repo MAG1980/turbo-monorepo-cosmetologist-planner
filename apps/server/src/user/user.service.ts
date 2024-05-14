@@ -1,13 +1,24 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserRepository } from '@server/user/user.repository';
 import { SignUpUserDto } from '@server/auth/dto';
 import { GetUsersDto, UpdateUserDto } from '@server/user/dto';
 import type { JwtPayload } from '@server/auth/interfaces';
 import { UserRoleEnum } from '@server/user/enums/user-role.enum';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
+import { UserEntity } from '@server/user/entities/User.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+  ) {}
 
   create(signUpUserDto: SignUpUserDto) {
     return this.userRepository.createEntity(signUpUserDto);
@@ -17,8 +28,21 @@ export class UserService {
     return this.userRepository.findAllEntities(getUsersDto);
   }
 
-  findOne(id: number) {
-    return this.userRepository.findOneEntity(id);
+  async findOne(id: number) {
+    //get from cache
+    const user = await this.cacheManager.get<UserEntity>(`user_${id}`); // get from cache if user
+    if (!user) {
+      // get from db
+      const user = await this.userRepository.findOneEntity(id);
+      if (!user) {
+        throw new NotFoundException(`User with ID = ${id} is not found!`);
+      }
+      await this.cacheManager.set(`user_${id}`, user, 60 * 60 * 1000);
+      console.log(`User_${id} from database`);
+      return user;
+    }
+    console.log(`User_${id} from cache`);
+    return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

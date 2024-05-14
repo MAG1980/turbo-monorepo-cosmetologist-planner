@@ -1,7 +1,7 @@
 import { UserEntity } from '@server/user/entities/User.entity';
 import { faker } from '@faker-js/faker/locale/ru';
 import { DataSource, Repository } from 'typeorm';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { SignUpUserDto } from '@server/auth/dto';
 import { GetUsersDto, UpdateUserDto } from '@server/user/dto';
 
@@ -58,11 +58,7 @@ export class UserRepository extends Repository<UserEntity> {
   }
 
   async findOneEntity(id: number) {
-    const entity = await this.findOne({ where: { id } });
-    if (!entity) {
-      throw new NotFoundException(`User with ID = ${id} is not found!`);
-    }
-    return entity;
+    return await this.findOne({ where: { id } });
   }
 
   updateEntity(id: number, updateUserDto: UpdateUserDto) {
