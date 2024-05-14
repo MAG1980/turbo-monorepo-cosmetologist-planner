@@ -9,12 +9,12 @@ import {
 import { AuthRepository } from '@server/auth/auth.repository';
 import { SignInUserDto, SignUpUserDto } from '@server/auth/dto';
 import type { Token } from '@server/auth/interfaces';
-import { UserRepository } from '@server/user/user.repository';
 import type { Response } from 'express';
 import { REFRESH_TOKEN } from '@server/config';
 import { ConfigService } from '@nestjs/config';
 import { UserEntity } from '@server/user/entities/User.entity';
 import moment from 'moment-timezone';
+import { UserService } from '@server/user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -22,27 +22,25 @@ export class AuthService {
   constructor(
     private readonly configService: ConfigService,
     private readonly authRepository: AuthRepository,
-    private readonly userRepository: UserRepository,
+    private readonly userService: UserService,
   ) {}
 
   async signUp(signUpUserDto: SignUpUserDto) {
-    if (await this.userRepository.isUserExists(signUpUserDto.login)) {
+    if (await this.userService.isUserExists(signUpUserDto.login)) {
       throw new ConflictException(
         `Пользователь с логином ${signUpUserDto.login} уже существует`,
       );
     }
 
-    return await this.userRepository
-      .createEntity(signUpUserDto)
-      .catch((error) => {
-        this.logger.error(error);
-        return null;
-      });
+    return await this.userService.create(signUpUserDto).catch((error) => {
+      this.logger.error(error);
+      return null;
+    });
   }
 
   async signIn(signInUserDto: SignInUserDto, agent: string): Promise<Token> {
     console.log('signInUserDto ', signInUserDto, { agent });
-    const user = await this.userRepository
+    const user = await this.userService
       .getUserWithPasswordByLogin(signInUserDto.login)
       .catch((error) => {
         this.logger.error(error);
@@ -95,9 +93,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const user = await this.userRepository.findOne({
-      where: { id: token.userId },
-    });
+    const user = await this.userService.findOne(token.userId);
 
     if (!user) {
       throw new UnauthorizedException();

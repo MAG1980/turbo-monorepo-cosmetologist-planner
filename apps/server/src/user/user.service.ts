@@ -31,4 +31,12 @@ export class UserService {
     }
     return this.userRepository.removeEntity(id);
   }
+
+  getUserWithPasswordByLogin(login: string) {
+    return this.userRepository.getUserWithPasswordByLogin(login);
+  }
+
+  async isUserExists(login: string) {
+    return await this.userRepository.isUserExists(login);
+  }
 }
