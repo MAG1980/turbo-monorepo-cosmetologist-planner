@@ -31,25 +31,33 @@ export class UserService {
     return this.userRepository.findAllEntities(getUsersDto);
   }
 
-  async findOne(id: number) {
+  async findOne(idOrLogin: string | number, isResetCache: boolean = false) {
+    //Очистка данных в кеш по ключу
+    if (isResetCache) {
+      await this.cacheManager.del(`user_${idOrLogin}`);
+      console.log(`User_${idOrLogin} deleted from cache`);
+    }
     //get from cache
-    const user = await this.cacheManager.get<UserEntity>(`user_${id}`); // get from cache if user
+    const user = await this.cacheManager.get<UserEntity>(`user_${idOrLogin}`);
+
     if (!user) {
       // get from db
-      const user = await this.userRepository.findOneEntity(id);
+      const user = await this.userRepository.findOneEntity(idOrLogin);
       if (!user) {
-        throw new NotFoundException(`User with ID = ${id} is not found!`);
+        throw new NotFoundException(
+          `User with ID = ${idOrLogin} is not found!`,
+        );
       }
 
       const ttl = convertToMilliseconds(
         this.configService.get<string>('JWT_EXPIRATION'),
       );
 
-      await this.cacheManager.set(`user_${id}`, user, ttl);
-      console.log(`User_${id} from database`);
+      await this.cacheManager.set(`user_${idOrLogin}`, user, ttl);
+      console.log(`User_${idOrLogin} from database`);
       return user;
     }
-    console.log(`User_${id} from cache`);
+    console.log(`User_${idOrLogin} from cache`);
     return user;
   }
 
@@ -57,15 +65,15 @@ export class UserService {
     return this.userRepository.updateEntity(id, updateUserDto);
   }
 
-  remove(id: number, user: JwtPayload) {
+  async remove(id: number, user: JwtPayload) {
     if (user.sub !== id && !user.roles.includes(UserRoleEnum.ADMIN)) {
       throw new ForbiddenException('You are not allowed to delete this user');
     }
+    await Promise.all([
+      await this.cacheManager.del(`user_${id}`),
+      await this.cacheManager.del(`user_${user.login}`),
+    ]);
     return this.userRepository.removeEntity(id);
-  }
-
-  getUserWithPasswordByLogin(login: string) {
-    return this.userRepository.getUserWithPasswordByLogin(login);
   }
 
   async isUserExists(login: string) {

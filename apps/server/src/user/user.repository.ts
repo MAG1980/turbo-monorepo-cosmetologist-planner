@@ -57,8 +57,20 @@ export class UserRepository extends Repository<UserEntity> {
     return queryBuilder.getMany();
   }
 
-  async findOneEntity(id: number) {
-    return await this.findOne({ where: { id } });
+  findOneEntity(idOrLogin: string | number) {
+    const queryBuilder = this.createQueryBuilder('user');
+    if (typeof idOrLogin === 'number') {
+      queryBuilder.where('user.id = :id', { id: idOrLogin });
+    }
+    if (typeof idOrLogin === 'string') {
+      //Для извлечения скрытых данных из таблицы, нужно использовать .addSelect()
+      //Остальные столбцы таблицы автоматически добавятся в SELECT SQL запроса
+      queryBuilder
+        .where('user.login = :login', { login: idOrLogin })
+        .addSelect('user.password');
+    }
+
+    return queryBuilder.getOne();
   }
 
   updateEntity(id: number, updateUserDto: UpdateUserDto) {
@@ -67,17 +79,6 @@ export class UserRepository extends Repository<UserEntity> {
 
   removeEntity(id: number) {
     return this.delete(id);
-  }
-
-  getUserWithPasswordByLogin(login: string) {
-    return (
-      this.createQueryBuilder('user')
-        //Для извлечения скрытых данных из таблицы, нужно использовать .addSelect()
-        //Остальные столбцы таблицы автоматически добавятся в SELECT SQL запроса
-        .addSelect('user.password')
-        .where('user.login = :login', { login })
-        .getOne()
-    );
   }
 
   async isUserExists(login: string) {

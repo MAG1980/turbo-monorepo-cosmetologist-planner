@@ -41,7 +41,7 @@ export class AuthService {
   async signIn(signInUserDto: SignInUserDto, agent: string): Promise<Token> {
     console.log('signInUserDto ', signInUserDto, { agent });
     const user = await this.userService
-      .getUserWithPasswordByLogin(signInUserDto.login)
+      .findOne(signInUserDto.login, true)
       .catch((error) => {
         this.logger.error(error);
         return null;

@@ -26,6 +26,7 @@ export class AuthRepository extends Repository<TokenEntity> {
       (await this.jwtService.signAsync({
         //sub субъект JWT – пользователь, который запросил токен, обычно адрес электронной почты.
         sub: user.id,
+        login: user.login,
         email: user.email,
         roles: user.roles,
       }))
