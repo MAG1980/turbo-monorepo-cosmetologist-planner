@@ -7,8 +7,11 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Query,
+  Req,
   Res,
   UnauthorizedException,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import type { Response } from 'express';
@@ -17,6 +20,8 @@ import { SignInUserDto, SignUpUserDto } from '@server/auth/dto';
 import { REFRESH_TOKEN } from '@server/config';
 import { Cookie, Public, UserAgent } from '@server/auth/decorators';
 import { UserResponse } from '@server/user/responses';
+import { GoogleGuard } from '@server/auth/guards/google.guard';
+import type { RequestInterface } from '@server/auth/interfaces/request.interface';
 
 @Public()
 @Controller('auth')
@@ -95,5 +100,29 @@ export class AuthController {
       expires: new Date(),
     });
     response.status(HttpStatus.OK).json({ message: 'Вы вышли из системы' });
+  }
+
+  @UseGuards(GoogleGuard)
+  @Get('google')
+  googleAuth() {
+    return { message: 'Google Authentication' };
+  }
+
+  @UseGuards(GoogleGuard)
+  @Get('google-redirect')
+  googleRedirect(@Req() request: RequestInterface, @Res() response: Response) {
+    /*    //Просмотр профиля пользователя в браузере
+    return request.user;*/
+    const token = request.user['accessToken'];
+    //Перенаправление данных на Frontend
+    console.log({ token });
+    return response.redirect(
+      `http://localhost:5000/auth/success?token=${token}`,
+    );
+  }
+
+  @Get('success')
+  success(@Query('token') token: string) {
+    return { token };
   }
 }
