@@ -8,9 +8,15 @@ import { JwtModule } from '@nestjs/jwt';
 import { options } from '@server/config';
 import { STRATEGIES } from '@server/auth/strategies';
 import { GUARDS } from '@server/auth/guards';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [PassportModule, JwtModule.registerAsync(options()), UserModule],
+  imports: [
+    PassportModule,
+    JwtModule.registerAsync(options()),
+    UserModule,
+    HttpModule,
+  ],
   controllers: [AuthController],
   providers: [AuthService, AuthRepository, ...STRATEGIES, ...GUARDS],
 })

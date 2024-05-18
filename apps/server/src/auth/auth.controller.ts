@@ -22,11 +22,16 @@ import { Cookie, Public, UserAgent } from '@server/auth/decorators';
 import { UserResponse } from '@server/user/responses';
 import { GoogleGuard } from '@server/auth/guards/google.guard';
 import type { RequestInterface } from '@server/auth/interfaces/request.interface';
+import { HttpService } from '@nestjs/axios';
+import { map } from 'rxjs';
 
 @Public()
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly httpService: HttpService,
+  ) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('/sign-up')
@@ -114,15 +119,36 @@ export class AuthController {
     /*    //Просмотр профиля пользователя в браузере
     return request.user;*/
     const token = request.user['accessToken'];
-    //Перенаправление данных на Frontend
+
     console.log({ token });
+    //"Пробрасывание" accessToken, сгенерированного сервером Google, на Frontend
     return response.redirect(
       `http://localhost:5000/auth/success?token=${token}`,
     );
   }
 
+  //Имитация обработки на стороне Frontend token, перенаправленного с эндпойнта /auth/google-redirect
   @Get('success')
   success(@Query('token') token: string) {
-    return { token };
+    //На Frontend извлекаем из query-параметра строки запроса accessToken.
+    //Используем accessToken для получения информации о пользователе с сервера Google.
+    //Имитируем Get запрос к серверу на стороне Frontend.
+    return (
+      this.httpService
+        .get(
+          `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${token}`,
+          {},
+        )
+        //Получаем Observable
+        .pipe(
+          //Деструктурируем полученные данные (response.data) и отправляем их на Frontend
+          map(({ data }) => {
+            console.log({ data });
+            return data;
+          }),
+        )
+    );
   }
+  //Если информация о пользователе получена успешно, то считаем, что пользователь вошел в систему
+  //Генерируем JWT-токены для обмена данными между клиентом и сервером и отправляем их на Frontend
 }
