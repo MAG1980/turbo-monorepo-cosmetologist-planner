@@ -31,21 +31,26 @@ export class UserService {
     return this.userRepository.findAllEntities(getUsersDto);
   }
 
-  async findOne(idOrLogin: string | number, isResetCache: boolean = false) {
+  async findOne(
+    idOrLoginOrEmail: string | number,
+    isResetCache: boolean = false,
+  ) {
     //Очистка данных в кеш по ключу
     if (isResetCache) {
-      await this.cacheManager.del(`user_${idOrLogin}`);
-      console.log(`User_${idOrLogin} deleted from cache`);
+      await this.cacheManager.del(`user_${idOrLoginOrEmail}`);
+      console.log(`User_${idOrLoginOrEmail} deleted from cache`);
     }
     //get from cache
-    const user = await this.cacheManager.get<UserEntity>(`user_${idOrLogin}`);
+    const user = await this.cacheManager.get<UserEntity>(
+      `user_${idOrLoginOrEmail}`,
+    );
 
     if (!user) {
       // get from db
-      const user = await this.userRepository.findOneEntity(idOrLogin);
+      const user = await this.userRepository.findOneEntity(idOrLoginOrEmail);
       if (!user) {
         throw new NotFoundException(
-          `User with ID = ${idOrLogin} is not found!`,
+          `User with ID = ${idOrLoginOrEmail} is not found!`,
         );
       }
 
@@ -53,11 +58,11 @@ export class UserService {
         this.configService.get<string>('JWT_EXPIRATION'),
       );
 
-      await this.cacheManager.set(`user_${idOrLogin}`, user, ttl);
-      console.log(`User_${idOrLogin} from database`);
+      await this.cacheManager.set(`user_${idOrLoginOrEmail}`, user, ttl);
+      console.log(`User_${idOrLoginOrEmail} from database`);
       return user;
     }
-    console.log(`User_${idOrLogin} from cache`);
+    console.log(`User_${idOrLoginOrEmail} from cache`);
     return user;
   }
 

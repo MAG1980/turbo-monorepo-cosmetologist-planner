@@ -57,16 +57,17 @@ export class UserRepository extends Repository<UserEntity> {
     return queryBuilder.getMany();
   }
 
-  findOneEntity(idOrLogin: string | number) {
+  findOneEntity(idOrLoginOrEmail: string | number) {
     const queryBuilder = this.createQueryBuilder('user');
-    if (typeof idOrLogin === 'number') {
-      queryBuilder.where('user.id = :id', { id: idOrLogin });
+    if (typeof idOrLoginOrEmail === 'number') {
+      queryBuilder.where('user.id = :id', { id: idOrLoginOrEmail });
     }
-    if (typeof idOrLogin === 'string') {
+    if (typeof idOrLoginOrEmail === 'string') {
       //Для извлечения скрытых данных из таблицы, нужно использовать .addSelect()
       //Остальные столбцы таблицы автоматически добавятся в SELECT SQL запроса
       queryBuilder
-        .where('user.login = :login', { login: idOrLogin })
+        .where('user.login = :login', { login: idOrLoginOrEmail })
+        .orWhere('user.email = :email', { email: idOrLoginOrEmail })
         .addSelect('user.password');
     }
 
@@ -81,11 +82,12 @@ export class UserRepository extends Repository<UserEntity> {
     return this.delete(id);
   }
 
-  async isUserExists(login: string) {
+  async isUserExists(loginOrEmail: string) {
     return (
       (await this.createQueryBuilder('user')
         .select('user.login')
-        .where('user.login = :login', { login })
+        .where('user.login = :loginOrEmail', { loginOrEmail })
+        .orWhere('user.email = :loginOrEmail', { loginOrEmail })
         .getOne()) !== null
     );
   }
