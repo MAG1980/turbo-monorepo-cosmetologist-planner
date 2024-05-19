@@ -4,6 +4,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { SignUpUserDto } from '@server/auth/dto';
 import { GetUsersDto, UpdateUserDto } from '@server/user/dto';
+import { AuthenticationProvidersEnum } from '@server/common/enums';
 
 @Injectable()
 export class UserRepository extends Repository<UserEntity> {
@@ -31,8 +32,11 @@ export class UserRepository extends Repository<UserEntity> {
     }
   }
 
-  createEntity(signUpUserDto: SignUpUserDto) {
-    const entity = this.create(signUpUserDto);
+  createEntity(
+    signUpUserDto: Partial<SignUpUserDto>,
+    provider: AuthenticationProvidersEnum,
+  ) {
+    const entity = this.create({ ...signUpUserDto, provider });
     return this.save(entity);
   }
 

@@ -1,9 +1,4 @@
-import {
-  ForbiddenException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { UserRepository } from '@server/user/user.repository';
 import { SignUpUserDto } from '@server/auth/dto';
 import { GetUsersDto, UpdateUserDto } from '@server/user/dto';
@@ -14,6 +9,7 @@ import type { Cache } from 'cache-manager';
 import { UserEntity } from '@server/user/entities/User.entity';
 import { ConfigService } from '@nestjs/config';
 import { convertToMilliseconds } from '@server/common/utils';
+import { AuthenticationProvidersEnum } from '@server/common/enums';
 
 @Injectable()
 export class UserService {
@@ -23,8 +19,11 @@ export class UserService {
     private readonly configService: ConfigService,
   ) {}
 
-  create(signUpUserDto: SignUpUserDto) {
-    return this.userRepository.createEntity(signUpUserDto);
+  create(
+    signUpUserDto: Partial<SignUpUserDto>,
+    provider: AuthenticationProvidersEnum,
+  ) {
+    return this.userRepository.createEntity(signUpUserDto, provider);
   }
 
   findAll(getUsersDto: GetUsersDto) {
@@ -49,9 +48,7 @@ export class UserService {
       // get from db
       const user = await this.userRepository.findOneEntity(idOrLoginOrEmail);
       if (!user) {
-        throw new NotFoundException(
-          `User with ID = ${idOrLoginOrEmail} is not found!`,
-        );
+        return null;
       }
 
       const ttl = convertToMilliseconds(

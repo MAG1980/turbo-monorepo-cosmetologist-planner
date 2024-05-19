@@ -1,8 +1,10 @@
 import {
+  BadRequestException,
   ConflictException,
   HttpStatus,
   Injectable,
   Logger,
+  NotFoundException,
   Res,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -15,6 +17,7 @@ import { ConfigService } from '@nestjs/config';
 import { UserEntity } from '@server/user/entities/User.entity';
 import moment from 'moment-timezone';
 import { UserService } from '@server/user/user.service';
+import { AuthenticationProvidersEnum } from '@server/common/enums';
 
 @Injectable()
 export class AuthService {
@@ -32,10 +35,12 @@ export class AuthService {
       );
     }
 
-    return await this.userService.create(signUpUserDto).catch((error) => {
-      this.logger.error(error);
-      return null;
-    });
+    return await this.userService
+      .create(signUpUserDto, AuthenticationProvidersEnum.LOCAL)
+      .catch((error) => {
+        this.logger.error(error);
+        return null;
+      });
   }
 
   async signIn(signInUserDto: SignInUserDto, agent: string): Promise<Token> {
@@ -46,6 +51,10 @@ export class AuthService {
         this.logger.error(error);
         return null;
       });
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
 
     if (user && this.authRepository.isPasswordMatch(signInUserDto, user)) {
       return await this.generateTokens(user, agent);
@@ -96,7 +105,9 @@ export class AuthService {
     const user = await this.userService.findOne(token.userId);
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new NotFoundException(
+        `User with ID = ${token.userId} is not found!`,
+      );
     }
 
     return await this.generateTokens(user, agent);
@@ -116,5 +127,33 @@ export class AuthService {
 
   deleteRefreshToken(refreshToken: string) {
     return this.authRepository.delete({ token: refreshToken });
+  }
+
+  /**
+   * Проверяет наличие в БД пользователя с заданным email,
+   * если он не существует, то сохраняет его в БД,
+   * возвращает новые JWT-токены, сгенерированные для пользователя
+   * @param email
+   * @param agent
+   */
+  async googleAuth(email: string, agent: string) {
+    const existedUser = await this.userService.findOne(email);
+
+    if (existedUser) {
+      return this.generateTokens(existedUser, agent);
+    }
+
+    const newUser = await this.userService
+      .create({ email }, AuthenticationProvidersEnum.GOOGLE)
+      .catch((error) => {
+        this.logger.error(error);
+        return null;
+      });
+    if (!newUser) {
+      throw new BadRequestException(
+        `Не получилось создать пользователя с ${email} в GoogleAuth`,
+      );
+    }
+    return this.generateTokens(newUser, agent);
   }
 }

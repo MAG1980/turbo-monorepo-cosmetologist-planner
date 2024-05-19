@@ -23,7 +23,8 @@ import { UserResponse } from '@server/user/responses';
 import { GoogleGuard } from '@server/auth/guards/google.guard';
 import type { RequestInterface } from '@server/auth/interfaces/request.interface';
 import { HttpService } from '@nestjs/axios';
-import { map } from 'rxjs';
+import { mergeMap } from 'rxjs';
+import { handleTimeoutAndErrors } from '@server/common/helpers';
 
 @Public()
 @Controller('auth')
@@ -129,7 +130,7 @@ export class AuthController {
 
   //Имитация обработки на стороне Frontend token, перенаправленного с эндпойнта /auth/google-redirect
   @Get('success')
-  success(@Query('token') token: string) {
+  success(@Query('token') token: string, @UserAgent() agent: string) {
     //На Frontend извлекаем из query-параметра строки запроса accessToken.
     //Используем accessToken для получения информации о пользователе с сервера Google.
     //Имитируем Get запрос к серверу на стороне Frontend.
@@ -139,13 +140,16 @@ export class AuthController {
           `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${token}`,
           {},
         )
-        //Получаем Observable
+        //httpService @nestjs/axios возвращает Observable
         .pipe(
-          //Деструктурируем полученные данные (response.data) и отправляем их на Frontend
-          map(({ data }) => {
-            console.log({ data });
-            return data;
-          }),
+          //mergeMap позволяет одновременно активировать несколько внутренних подписок
+          mergeMap(
+            //Деструктурируем полученные данные (response.data) и отправляем их на Frontend
+            ({ data: { email } }) => this.authService.googleAuth(email, agent),
+          ),
+          // С mergeMap возможна утечка памяти из-за долгоживущих внутренних подписок,
+          // поэтому при истечении времени ожидания внутренней подписки выбрасываем исключение с помощью handleTimeoutAndErrors
+          handleTimeoutAndErrors(),
         )
     );
   }
