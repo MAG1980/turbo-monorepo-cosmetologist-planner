@@ -23,7 +23,7 @@ import { UserResponse } from '@server/user/responses';
 import { GoogleGuard } from '@server/auth/guards/google.guard';
 import type { RequestInterface } from '@server/auth/interfaces/request.interface';
 import { HttpService } from '@nestjs/axios';
-import { mergeMap } from 'rxjs';
+import { map, mergeMap } from 'rxjs';
 import { handleTimeoutAndErrors } from '@server/common/helpers';
 
 @Public()
@@ -130,7 +130,11 @@ export class AuthController {
 
   //Имитация обработки на стороне Frontend token, перенаправленного с эндпойнта /auth/google-redirect
   @Get('success')
-  success(@Query('token') token: string, @UserAgent() agent: string) {
+  success(
+    @Query('token') token: string,
+    @UserAgent() agent: string,
+    @Res() response: Response,
+  ) {
     //На Frontend извлекаем из query-параметра строки запроса accessToken.
     //Используем accessToken для получения информации о пользователе с сервера Google.
     //Имитируем Get запрос к серверу на стороне Frontend.
@@ -147,6 +151,10 @@ export class AuthController {
             //Деструктурируем полученные данные (response.data) и отправляем их на Frontend
             ({ data: { email } }) => this.authService.googleAuth(email, agent),
           ),
+          //На предыдущем этапе googleAuth() возвращает новые JWT-токены
+          map((token) => {
+            this.authService.setRefreshTokenHttpOnlyCookie(response, token);
+          }),
           // С mergeMap возможна утечка памяти из-за долгоживущих внутренних подписок,
           // поэтому при истечении времени ожидания внутренней подписки выбрасываем исключение с помощью handleTimeoutAndErrors
           handleTimeoutAndErrors(),
