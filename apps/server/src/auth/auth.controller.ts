@@ -26,6 +26,8 @@ import { HttpService } from '@nestjs/axios';
 import { map, mergeMap, tap } from 'rxjs';
 import { handleTimeoutAndErrors } from '@server/common/helpers';
 import { YandexGuard } from '@server/auth/guards/yandex.guard';
+import { YandexProfile } from '@server/auth/interfaces/yandex-profile.interface';
+import { AuthenticationProvidersEnum } from '@server/common/enums';
 
 @Public()
 @Controller('auth')
@@ -150,7 +152,12 @@ export class AuthController {
           //mergeMap позволяет одновременно активировать несколько внутренних подписок
           mergeMap(
             //Деструктурируем полученные данные (response.data) и отправляем их на Frontend
-            ({ data: { email } }) => this.authService.googleAuth(email, agent),
+            ({ data: { email } }) =>
+              this.authService.socialProviderAuth(
+                email,
+                agent,
+                AuthenticationProvidersEnum.GOOGLE,
+              ),
           ),
           //На предыдущем этапе googleAuth() возвращает новые JWT-токены
           map((token) => {
@@ -205,11 +212,16 @@ export class AuthController {
         )
         //httpService @nestjs/axios возвращает Observable
         .pipe(
-          tap(({ data }) => console.log({ data })),
+          tap(({ data }: { data: YandexProfile }) => console.log({ data })),
           //mergeMap позволяет одновременно активировать несколько внутренних подписок
           mergeMap(
             //Деструктурируем полученные данные (response.data) и отправляем их на Frontend
-            ({ data: { email } }) => this.authService.googleAuth(email, agent),
+            ({ data: { default_email: email } }) =>
+              this.authService.socialProviderAuth(
+                email,
+                agent,
+                AuthenticationProvidersEnum.YANDEX,
+              ),
           ),
           //На предыдущем этапе googleAuth() возвращает новые JWT-токены
           map((token) => {

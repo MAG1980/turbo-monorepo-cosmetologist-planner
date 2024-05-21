@@ -136,15 +136,18 @@ export class AuthService {
    * @param email
    * @param agent
    */
-  async googleAuth(email: string, agent: string) {
+  async socialProviderAuth(
+    email: string,
+    agent: string,
+    authenticationProvider: AuthenticationProvidersEnum,
+  ) {
     const existedUser = await this.userService.findOne(email);
-
     if (existedUser) {
       return this.generateTokens(existedUser, agent);
     }
 
     const newUser = await this.userService
-      .create({ email }, AuthenticationProvidersEnum.GOOGLE)
+      .create({ email }, authenticationProvider)
       .catch((error) => {
         this.logger.error(error);
         return null;
