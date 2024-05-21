@@ -23,8 +23,9 @@ import { UserResponse } from '@server/user/responses';
 import { GoogleGuard } from '@server/auth/guards/google.guard';
 import type { RequestInterface } from '@server/auth/interfaces/request.interface';
 import { HttpService } from '@nestjs/axios';
-import { map, mergeMap } from 'rxjs';
+import { map, mergeMap, tap } from 'rxjs';
 import { handleTimeoutAndErrors } from '@server/common/helpers';
+import { YandexGuard } from '@server/auth/guards/yandex.guard';
 
 @Public()
 @Controller('auth')
@@ -124,13 +125,13 @@ export class AuthController {
     console.log({ token });
     //"Пробрасывание" accessToken, сгенерированного сервером Google, на Frontend
     return response.redirect(
-      `http://localhost:5000/auth/success?token=${token}`,
+      `http://localhost:5000/auth/google-success?token=${token}`,
     );
   }
 
   //Имитация обработки на стороне Frontend token, перенаправленного с эндпойнта /auth/google-redirect
-  @Get('success')
-  success(
+  @Get('google-success')
+  googleSuccess(
     @Query('token') token: string,
     @UserAgent() agent: string,
     @Res() response: Response,
@@ -163,4 +164,61 @@ export class AuthController {
   }
   //Если информация о пользователе получена успешно, то считаем, что пользователь вошел в систему
   //Генерируем JWT-токены для обмена данными между клиентом и сервером и отправляем их на Frontend
+
+  @UseGuards(YandexGuard)
+  @Get('yandex')
+  yandexAuth() {
+    // return { message: 'Yandex Authentication' };
+    return { message: 'Yandex Authentication' };
+  }
+
+  @UseGuards(YandexGuard)
+  @Get('yandex-redirect')
+  yandexRedirect(@Req() request: RequestInterface, @Res() response: Response) {
+    /*    //Просмотр профиля пользователя в браузере
+    return request.user;*/
+    const token = request.user['accessToken'];
+
+    console.log({ token });
+    //"Пробрасывание" accessToken, сгенерированного сервером Yandex, на Frontend
+    return response.redirect(
+      //Небезопасный способ. OAuth-token следует передавать в заголовке Authorization.
+      `http://localhost:5000/auth/yandex-success?token=${token}`,
+    );
+  }
+
+  //Имитация обработки на стороне Frontend token, перенаправленного с эндпойнта /auth/yandex-redirect
+  @Get('yandex-success')
+  yandexSuccess(
+    @Query('token') token: string,
+    @UserAgent() agent: string,
+    @Res() response: Response,
+  ) {
+    //На Frontend извлекаем из query-параметра строки запроса accessToken.
+    //Используем accessToken для получения информации о пользователе с сервера Google.
+    //Имитируем Get запрос к серверу на стороне Frontend.
+    return (
+      this.httpService
+        .get(
+          `https://login.yandex.ru/info?format=json&oauth_token=${token}`,
+          {},
+        )
+        //httpService @nestjs/axios возвращает Observable
+        .pipe(
+          tap(({ data }) => console.log({ data })),
+          //mergeMap позволяет одновременно активировать несколько внутренних подписок
+          mergeMap(
+            //Деструктурируем полученные данные (response.data) и отправляем их на Frontend
+            ({ data: { email } }) => this.authService.googleAuth(email, agent),
+          ),
+          //На предыдущем этапе googleAuth() возвращает новые JWT-токены
+          map((token) => {
+            this.authService.setRefreshTokenHttpOnlyCookie(response, token);
+          }),
+          // С mergeMap возможна утечка памяти из-за долгоживущих внутренних подписок,
+          // поэтому при истечении времени ожидания внутренней подписки выбрасываем исключение с помощью handleTimeoutAndErrors
+          handleTimeoutAndErrors(),
+        )
+    );
+  }
 }
