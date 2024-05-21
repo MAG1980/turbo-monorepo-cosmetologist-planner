@@ -143,6 +143,20 @@ export class AuthService {
   ) {
     const existedUser = await this.userService.findOne(email);
     if (existedUser) {
+      /*Если пользователь в различных соцсетях для аутентификации использует один и тот же адрес электронной почты,
+      то требуется обновлять свойство "provider" в зависимости от использующейся при аутентификации соцсети.*/
+      const providerUpdateResult = await this.userService.updateProvider(
+        email,
+        authenticationProvider,
+      );
+
+      if (!providerUpdateResult.affected) {
+        throw new BadRequestException(
+          `Не получилось обновить пользователя с ${email} в socialProviderAuth`,
+        );
+      }
+      /*При генерации токенов свойство "provider" не используется,
+      поэтому получать из БД обновлённые данные пользователя не требуется*/
       return this.generateTokens(existedUser, agent);
     }
 

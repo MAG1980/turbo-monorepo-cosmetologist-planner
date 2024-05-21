@@ -26,6 +26,10 @@ export class UserService {
     return this.userRepository.createEntity(signUpUserDto, provider);
   }
 
+  updateProvider(email: string, provider: AuthenticationProvidersEnum) {
+    return this.userRepository.updateProvider(email, provider);
+  }
+
   findAll(getUsersDto: GetUsersDto) {
     return this.userRepository.findAllEntities(getUsersDto);
   }
@@ -78,7 +82,7 @@ export class UserService {
     return this.userRepository.removeEntity(id);
   }
 
-  async isUserExists(login: string) {
-    return await this.userRepository.isUserExists(login);
+  async isUserExists(loginOrEmail: string) {
+    return await this.userRepository.isUserExists(loginOrEmail);
   }
 }

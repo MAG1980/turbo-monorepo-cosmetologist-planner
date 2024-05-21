@@ -40,6 +40,10 @@ export class UserRepository extends Repository<UserEntity> {
     return this.save(entity);
   }
 
+  updateProvider(email: string, provider: AuthenticationProvidersEnum) {
+    return this.update({ email }, { provider });
+  }
+
   findAllEntities(getUsersDto: GetUsersDto = {}) {
     const { search, email, phone } = getUsersDto;
     const queryBuilder = this.createQueryBuilder('user');
