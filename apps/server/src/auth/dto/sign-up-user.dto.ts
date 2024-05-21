@@ -15,11 +15,6 @@ import { IsPasswordMatchConstraint } from '@server/auth/decorators/is-password-m
 export class SignUpUserDto {
   @IsNotEmpty()
   @MinLength(5)
-  @MaxLength(15)
-  readonly login!: string;
-
-  @IsNotEmpty()
-  @MinLength(5)
   @MaxLength(35)
   readonly name!: string;
 

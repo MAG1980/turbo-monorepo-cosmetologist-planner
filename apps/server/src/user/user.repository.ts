@@ -18,7 +18,6 @@ export class UserRepository extends Repository<UserEntity> {
     try {
       for (let i = 0; i < usersAmount; i++) {
         const user = new UserEntity();
-        user.login = faker.internet.userName();
         user.name = faker.person.fullName();
         user.email = faker.internet.email();
         user.phone = faker.phone.number();

@@ -29,9 +29,9 @@ export class AuthService {
   ) {}
 
   async signUp(signUpUserDto: SignUpUserDto) {
-    if (await this.userService.isUserExists(signUpUserDto.login)) {
+    if (await this.userService.isUserExists(signUpUserDto.email)) {
       throw new ConflictException(
-        `Пользователь с логином ${signUpUserDto.login} уже существует`,
+        `Пользователь с логином ${signUpUserDto.email} уже существует`,
       );
     }
 
@@ -46,7 +46,7 @@ export class AuthService {
   async signIn(signInUserDto: SignInUserDto, agent: string): Promise<Token> {
     console.log('signInUserDto ', signInUserDto, { agent });
     const user = await this.userService
-      .findOne(signInUserDto.login, true)
+      .findOne(signInUserDto.email, true)
       .catch((error) => {
         this.logger.error(error);
         return null;

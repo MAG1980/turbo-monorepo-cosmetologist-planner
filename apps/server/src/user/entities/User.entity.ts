@@ -10,15 +10,12 @@ import { OrderEntity } from '../../order/entities/Order.entity';
 import { UserRoleEnum } from '../../user/enums/user-role.enum';
 import { genSaltSync, hashSync } from 'bcrypt';
 import { AuthenticationProvidersEnum } from '../../common/enums';
-import { getRandomPassword } from '@server/common/helpers';
+import { getRandomPassword } from '../../common/helpers';
 
 @Entity('users')
 export class UserEntity {
   @PrimaryGeneratedColumn()
   id!: number;
-
-  @Column({ unique: true, nullable: true })
-  login!: string;
 
   @Column({ nullable: true })
   name!: string;
