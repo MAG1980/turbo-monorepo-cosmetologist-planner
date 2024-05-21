@@ -71,6 +71,8 @@ export class UserService {
     if (!updateResult.affected) {
       throw new ForbiddenException('You are not allowed to update this user');
     }
+
+    //При получении пользователя из БД в кеш он будет обновлен
     return await this.findOne(id, true);
   }
 
