@@ -135,6 +135,7 @@ export class AuthService {
    * возвращает новые JWT-токены, сгенерированные для пользователя
    * @param email
    * @param agent
+   * @param authenticationProvider
    */
   async socialProviderAuth(
     email: string,
@@ -155,6 +156,7 @@ export class AuthService {
           `Не получилось обновить пользователя с ${email} в socialProviderAuth`,
         );
       }
+      this.userService.putToCache(existedUser);
       /*При генерации токенов свойство "provider" не используется,
       поэтому получать из БД обновлённые данные пользователя не требуется*/
       return this.generateTokens(existedUser, agent);

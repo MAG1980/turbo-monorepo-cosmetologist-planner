@@ -19,11 +19,16 @@ export class UserService {
     private readonly configService: ConfigService,
   ) {}
 
-  create(
+  async create(
     signUpUserDto: Partial<SignUpUserDto>,
     provider: AuthenticationProvidersEnum,
   ) {
-    return this.userRepository.createEntity(signUpUserDto, provider);
+    const savedUser = await this.userRepository.createEntity(
+      signUpUserDto,
+      provider,
+    );
+    await this.putToCache(savedUser);
+    return savedUser;
   }
 
   updateProvider(email: string, provider: AuthenticationProvidersEnum) {
@@ -34,55 +39,70 @@ export class UserService {
     return this.userRepository.findAllEntities(getUsersDto);
   }
 
-  async findOne(
-    idOrLoginOrEmail: string | number,
-    isResetCache: boolean = false,
-  ) {
+  async findOne(idOrEmail: string | number, isResetCache: boolean = false) {
     //Очистка данных в кеш по ключу
     if (isResetCache) {
-      await this.cacheManager.del(`user_${idOrLoginOrEmail}`);
-      console.log(`User_${idOrLoginOrEmail} deleted from cache`);
+      await this.removeFromCacheByIdOrEmail(idOrEmail);
+      console.log(`User_${idOrEmail} deleted from cache`);
     }
     //get from cache
-    const user = await this.cacheManager.get<UserEntity>(
-      `user_${idOrLoginOrEmail}`,
-    );
+    const user = await this.cacheManager.get<UserEntity>(`user_${idOrEmail}`);
 
     if (!user) {
       // get from db
-      const user = await this.userRepository.findOneEntity(idOrLoginOrEmail);
+      const user = await this.userRepository.findOneEntity(idOrEmail);
       if (!user) {
         return null;
       }
 
-      const ttl = convertToMilliseconds(
-        this.configService.get<string>('JWT_EXPIRATION'),
-      );
-
-      await this.cacheManager.set(`user_${idOrLoginOrEmail}`, user, ttl);
-      console.log(`User_${idOrLoginOrEmail} from database`);
+      await this.putToCache(user);
+      console.log(`User_${idOrEmail} from database`);
       return user;
     }
-    console.log(`User_${idOrLoginOrEmail} from cache`);
+    console.log(`User_${idOrEmail} from cache`);
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return this.userRepository.updateEntity(id, updateUserDto);
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const updateResult = await this.userRepository.updateEntity(
+      id,
+      updateUserDto,
+    );
+    if (!updateResult.affected) {
+      throw new ForbiddenException('You are not allowed to update this user');
+    }
+    return await this.findOne(id, true);
   }
 
   async remove(id: number, user: JwtPayload) {
     if (user.sub !== id && !user.roles.includes(UserRoleEnum.ADMIN)) {
       throw new ForbiddenException('You are not allowed to delete this user');
     }
-    await Promise.all([
-      await this.cacheManager.del(`user_${id}`),
-      await this.cacheManager.del(`user_${user.login}`),
-    ]);
+    await this.removeFromCache(user);
     return this.userRepository.removeEntity(id);
   }
 
   async isUserExists(loginOrEmail: string) {
     return await this.userRepository.isUserExists(loginOrEmail);
+  }
+
+  async putToCache(user: UserEntity) {
+    const ttl = convertToMilliseconds(
+      this.configService.get<string>('JWT_EXPIRATION'),
+    );
+    await Promise.all([
+      await this.cacheManager.set(`user_${user.id}`, user, ttl),
+      await this.cacheManager.set(`user_${user.email}`, user, ttl),
+    ]);
+  }
+
+  async removeFromCache(user: JwtPayload) {
+    await Promise.all([
+      await this.cacheManager.del(`user_${user.sub}`),
+      await this.cacheManager.del(`user_${user.email}`),
+    ]);
+  }
+  async removeFromCacheByIdOrEmail(idOrEmail: string | number) {
+    await this.cacheManager.del(`user_${idOrEmail}`);
   }
 }

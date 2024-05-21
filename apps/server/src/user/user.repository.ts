@@ -65,17 +65,16 @@ export class UserRepository extends Repository<UserEntity> {
     return queryBuilder.getMany();
   }
 
-  findOneEntity(idOrLoginOrEmail: string | number) {
+  findOneEntity(idOrEmail: string | number) {
     const queryBuilder = this.createQueryBuilder('user');
-    if (typeof idOrLoginOrEmail === 'number') {
-      queryBuilder.where('user.id = :id', { id: idOrLoginOrEmail });
+    if (typeof idOrEmail === 'number') {
+      queryBuilder.where('user.id = :id', { id: idOrEmail });
     }
-    if (typeof idOrLoginOrEmail === 'string') {
+    if (typeof idOrEmail === 'string') {
       //Для извлечения скрытых данных из таблицы, нужно использовать .addSelect()
       //Остальные столбцы таблицы автоматически добавятся в SELECT SQL запроса
       queryBuilder
-        .where('user.login = :login', { login: idOrLoginOrEmail })
-        .orWhere('user.email = :email', { email: idOrLoginOrEmail })
+        .where('user.email = :email', { email: idOrEmail })
         .addSelect('user.password');
     }
 
