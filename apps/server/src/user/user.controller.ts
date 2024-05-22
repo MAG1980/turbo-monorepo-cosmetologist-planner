@@ -49,12 +49,20 @@ export class UserController {
     return new UserResponse(user);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Roles(UserRoleEnum.ADMIN)
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.userService.update(id, updateUserDto);
+    const updatedUser = await this.userService.update(id, updateUserDto);
+
+    if (!updatedUser) {
+      throw new NotFoundException(`User with ID = ${id} is not found!`);
+    }
+    //В комбинации с   @UseInterceptors(ClassSerializerInterceptor) позволяет исключать приватные поля в ответе
+    return new UserResponse(updatedUser);
   }
 
   @Delete(':id')

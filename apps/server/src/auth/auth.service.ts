@@ -8,7 +8,7 @@ import {
   Res,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthRepository } from '@server/auth/auth.repository';
+import { JwtService } from '@nestjs/jwt';
 import { SignInUserDto, SignUpUserDto } from '@server/auth/dto';
 import type { Token } from '@server/auth/interfaces';
 import type { Response } from 'express';
@@ -18,14 +18,21 @@ import { UserEntity } from '@server/user/entities/User.entity';
 import moment from 'moment-timezone';
 import { UserService } from '@server/user/user.service';
 import { AuthenticationProvidersEnum } from '@server/common/enums';
+import { compareSync } from 'bcrypt';
+import { v4 } from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TokenEntity } from '@server/auth/entities/token.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   constructor(
     private readonly configService: ConfigService,
-    private readonly authRepository: AuthRepository,
+    private readonly jwtService: JwtService,
     private readonly userService: UserService,
+    @InjectRepository(TokenEntity)
+    private readonly tokenRepository: Repository<TokenEntity>,
   ) {}
 
   async signUp(signUpUserDto: SignUpUserDto) {
@@ -56,7 +63,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    if (user && this.authRepository.isPasswordMatch(signInUserDto, user)) {
+    if (user && this.isPasswordMatch(signInUserDto, user)) {
       return await this.generateTokens(user, agent);
     }
 
@@ -88,7 +95,7 @@ export class AuthService {
   }
 
   async refreshTokens(refreshToken: string, agent: string) {
-    const token = await this.authRepository.findOne({
+    const token = await this.tokenRepository.findOne({
       where: { token: refreshToken },
     });
 
@@ -96,7 +103,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    await this.authRepository.delete({ token: refreshToken });
+    await this.tokenRepository.delete({ token: refreshToken });
 
     if (moment().isAfter(token.expiration)) {
       throw new UnauthorizedException();
@@ -117,16 +124,13 @@ export class AuthService {
     user: UserEntity,
     agent: string,
   ): Promise<Token> {
-    const accessToken = await this.authRepository.getAccessToken(user);
-    const refreshToken = await this.authRepository.getRefreshToken(
-      user.id,
-      agent,
-    );
+    const accessToken = await this.getAccessToken(user);
+    const refreshToken = await this.getRefreshToken(user.id, agent);
     return { accessToken, refreshToken };
   }
 
   deleteRefreshToken(refreshToken: string) {
-    return this.authRepository.delete({ token: refreshToken });
+    return this.tokenRepository.delete({ token: refreshToken });
   }
 
   /**
@@ -172,5 +176,52 @@ export class AuthService {
       );
     }
     return this.generateTokens(newUser, agent);
+  }
+
+  isPasswordMatch(signInUserDto: SignInUserDto, user: UserEntity) {
+    return compareSync(signInUserDto.password, user.password);
+  }
+
+  /**
+   * Возвращает подписанный JWT-токен, содержащий данные о пользователе
+   * Стадия подписания JWT-токена с помощью JwtService, предоставляемого @nestjs/jwt
+   * @param user
+   */
+  async getAccessToken(user: UserEntity) {
+    return (
+      'Bearer ' +
+      (await this.jwtService.signAsync({
+        //sub субъект JWT – пользователь, который запросил токен, обычно адрес электронной почты.
+        sub: user.id,
+        email: user.email,
+        roles: user.roles,
+      }))
+    );
+  }
+  async getRefreshToken(userId: number, userAgent: string) {
+    const refreshToken = this.tokenRepository.create({
+      token: v4(),
+      expiration: moment().add(30, 'days').format('MM/DD/YYYY'),
+      user: { id: userId },
+      userAgent,
+    });
+    const upsert = await this.tokenRepository.upsert(refreshToken, [
+      'userId',
+      'userAgent',
+    ]);
+    console.log({ upsert });
+    return refreshToken;
+  }
+
+  async isTokenValid(token: string) {
+    const tokenEntity = await this.tokenRepository.findOne({
+      where: { token },
+    });
+    if (tokenEntity) {
+      if (moment().isBefore(tokenEntity.expiration)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
