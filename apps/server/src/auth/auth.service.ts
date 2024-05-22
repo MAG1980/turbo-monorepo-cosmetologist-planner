@@ -99,13 +99,11 @@ export class AuthService {
       where: { token: refreshToken },
     });
 
-    if (!token) {
-      throw new UnauthorizedException();
-    }
+    await this.tokenRepository.delete({
+      token: refreshToken,
+    });
 
-    await this.tokenRepository.delete({ token: refreshToken });
-
-    if (moment().isAfter(token.expiration)) {
+    if (!token || moment().isAfter(token.expiration)) {
       throw new UnauthorizedException();
     }
 
