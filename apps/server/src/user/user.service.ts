@@ -84,8 +84,8 @@ export class UserService {
     return this.userRepository.removeEntity(id);
   }
 
-  async isUserExists(loginOrEmail: string) {
-    return await this.userRepository.isUserExists(loginOrEmail);
+  async isUserExists(email: string) {
+    return await this.userRepository.isUserExists(email);
   }
 
   async putToCache(user: UserEntity) {

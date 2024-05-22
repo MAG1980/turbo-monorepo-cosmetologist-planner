@@ -88,12 +88,10 @@ export class UserRepository extends Repository<UserEntity> {
     return this.delete(id);
   }
 
-  async isUserExists(loginOrEmail: string) {
+  async isUserExists(email: string) {
     return (
       (await this.createQueryBuilder('user')
-        .select('user.login')
-        .where('user.login = :loginOrEmail', { loginOrEmail })
-        .orWhere('user.email = :loginOrEmail', { loginOrEmail })
+        .orWhere('user.email = :email', { email })
         .getOne()) !== null
     );
   }

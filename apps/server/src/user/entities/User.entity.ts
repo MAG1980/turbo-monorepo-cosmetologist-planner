@@ -50,6 +50,9 @@ export class UserEntity {
   })
   provider!: AuthenticationProvidersEnum;
 
+  @Column({ name: 'is_active', default: true })
+  isActive!: boolean;
+
   @BeforeInsert()
   async hashPassword() {
     if (this.password) {
