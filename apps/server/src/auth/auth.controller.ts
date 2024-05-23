@@ -127,7 +127,7 @@ export class AuthController {
     console.log({ token });
     //"Пробрасывание" accessToken, сгенерированного сервером Google, на Frontend
     return response.redirect(
-      `http://localhost:5000/auth/google-success?token=${token}`,
+      `http://localhost:5000/api/auth/google-success?token=${token}`,
     );
   }
 
@@ -190,7 +190,7 @@ export class AuthController {
     //"Пробрасывание" accessToken, сгенерированного сервером Yandex, на Frontend
     return response.redirect(
       //Небезопасный способ. OAuth-token следует передавать в заголовке Authorization.
-      `http://localhost:5000/auth/yandex-success?token=${token}`,
+      `http://localhost:5000/api/auth/yandex-success?token=${token}`,
     );
   }
 

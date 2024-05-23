@@ -10,7 +10,7 @@ config({ path: '../../.env' });
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api');
   app.use(cookieParser());
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
@@ -22,6 +22,9 @@ async function bootstrap() {
     .setDescription('API for making an appointment with a cosmetologist')
     .setVersion('1.0')
     .addTag('receptions')
+    .addBearerAuth()
+    .addSecurityRequirements('bearer')
+    .addOAuth2()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

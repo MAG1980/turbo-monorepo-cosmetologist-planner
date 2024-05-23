@@ -25,7 +25,7 @@ export class YandexStrategy extends PassportStrategy(Strategy, 'yandex') {
     super({
       clientID: configService.get('YANDEX_CLIENT_ID'),
       clientSecret: configService.get('YANDEX_CLIENT_SECRET'),
-      callbackURL: `${configService.get('APP_PROTOCOL')}://${configService.get('APP_HOST')}:${configService.get('APP_PORT')}/auth/yandex-redirect`,
+      callbackURL: `${configService.get('APP_PROTOCOL')}://${configService.get('APP_HOST')}:${configService.get('APP_PORT')}/api/auth/yandex-redirect`,
       // scope: ['email', 'profile'],
     });
   }
