@@ -225,9 +225,11 @@ export class AuthService {
   }
 
   getApiOrigin(): string {
+    const environment = this.configService.get('NODE_ENV');
     const protocol = this.configService.get('API_PROTOCOL');
     const host = this.configService.get('API_HOST');
     const port = this.configService.get('API_PORT');
-    return `${protocol}://${host}:${port}`;
+
+    return `${protocol}://${host}${environment === 'production' ? '' : `:${port}`}`;
   }
 }
