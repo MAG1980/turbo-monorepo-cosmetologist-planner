@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 
-const apiUrl = `${process.env.APP_PROTOCOL}://${process.env.APP_HOST}:${process.env.APP_PORT}`;
+const apiUrl = `${process.env.NEXT_PUBLIC_API_PROTOCOL}://${process.env.NEXT_PUBLIC_API_HOST}:${process.env.NEXT_PUBLIC_API_PORT}`;
 
 const nextConfig = {
   async rewrites() {
