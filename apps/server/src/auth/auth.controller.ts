@@ -124,10 +124,11 @@ export class AuthController {
     return request.user;*/
     const token = request.user['accessToken'];
 
-    console.log({ token });
+    const origin = this.authService.getApiOrigin();
+
     //"Пробрасывание" accessToken, сгенерированного сервером Google, на Frontend
     return response.redirect(
-      `http://localhost:5000/api/auth/google-success?token=${token}`,
+      `${origin}/api/auth/google-success?token=${token}`,
     );
   }
 
@@ -186,11 +187,12 @@ export class AuthController {
     return request.user;*/
     const token = request.user['accessToken'];
 
-    console.log({ token });
+    const origin = this.authService.getApiOrigin();
+
     //"Пробрасывание" accessToken, сгенерированного сервером Yandex, на Frontend
     return response.redirect(
       //Небезопасный способ. OAuth-token следует передавать в заголовке Authorization.
-      `http://localhost:5000/api/auth/yandex-success?token=${token}`,
+      `${origin}/api/auth/yandex-success?token=${token}`,
     );
   }
 

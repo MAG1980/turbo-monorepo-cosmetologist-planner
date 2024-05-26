@@ -53,7 +53,7 @@ export class OrderController {
   ) {
     limit = limit > 100 ? 100 : limit;
     console.log('getOrdersDto: ', getOrdersDto);
-    const route = `${process.env.APP_PROTOCOL}://${process.env.APP_HOST}:${process.env.APP_PORT}/orders`;
+    const route = `${process.env.API_PROTOCOL}://${process.env.API_HOST}:${process.env.API_PORT}/orders`;
     return this.orderService.findAll(getOrdersDto, { page, limit, route });
   }
 

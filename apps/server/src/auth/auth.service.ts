@@ -196,6 +196,7 @@ export class AuthService {
       }))
     );
   }
+
   async getRefreshToken(userId: number, userAgent: string) {
     const refreshToken = this.tokenRepository.create({
       token: v4(),
@@ -221,5 +222,12 @@ export class AuthService {
       }
     }
     return false;
+  }
+
+  getApiOrigin(): string {
+    const protocol = this.configService.get('API_PROTOCOL');
+    const host = this.configService.get('API_HOST');
+    const port = this.configService.get('API_PORT');
+    return `${protocol}://${host}:${port}`;
   }
 }
