@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { TrpcRouter } from '@server/trpc/trpc.router';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { config } from 'dotenv';
@@ -14,8 +13,6 @@ async function bootstrap() {
   app.use(cookieParser());
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
-  const trpcRouter = app.get(TrpcRouter);
-  await trpcRouter.applyMiddleware(app);
 
   const config = new DocumentBuilder()
     .setTitle('Cosmetologist planner')
@@ -27,7 +24,7 @@ async function bootstrap() {
     .addOAuth2()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api/swagger', app, document);
 
   await app.listen(process.env.API_PORT || 5000);
 }
