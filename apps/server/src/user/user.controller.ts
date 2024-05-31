@@ -19,7 +19,7 @@ import { GetUsersDto, UpdateUserDto } from '@server/user/dto';
 import { UserResponse } from '@server/user/responses';
 import { UserEntity } from '@server/user/entities/User.entity';
 import { CurrentUser, Roles } from '@server/auth/decorators';
-import type { JwtPayload } from '@server/auth/interfaces';
+import { JwtPayload } from '@server/auth/interfaces';
 import { RolesGuard } from '@server/auth/guards/roles.guard';
 import { UserRoleEnum } from '@server/user/enums/user-role.enum';
 

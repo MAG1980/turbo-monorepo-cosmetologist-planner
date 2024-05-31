@@ -14,14 +14,14 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import type { Response } from 'express';
+import { Response } from 'express';
 import { AuthService } from '@server/auth/auth.service';
 import { SignInUserDto, SignUpUserDto } from '@server/auth/dto';
 import { REFRESH_TOKEN } from '@server/config';
 import { Cookie, Public, UserAgent } from '@server/auth/decorators';
 import { UserResponse } from '@server/user/responses';
 import { GoogleGuard } from '@server/auth/guards/google.guard';
-import type { RequestInterface } from '@server/auth/interfaces/request.interface';
+import { RequestInterface } from '@server/auth/interfaces/request.interface';
 import { HttpService } from '@nestjs/axios';
 import { map, mergeMap, tap } from 'rxjs';
 import { handleTimeoutAndErrors } from '@server/common/helpers';

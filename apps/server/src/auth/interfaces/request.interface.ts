@@ -1,4 +1,4 @@
-import type { Request } from 'express';
+import { Request } from 'express';
 export interface RequestInterface extends Request {
   user: { accessToken: string };
 }

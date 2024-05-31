@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SignInUserDto, SignUpUserDto } from '@server/auth/dto';
-import type { Token } from '@server/auth/interfaces';
-import type { Response } from 'express';
+import { Token } from '@server/auth/interfaces';
+import { Response } from 'express';
 import { REFRESH_TOKEN } from '@server/config';
 import { ConfigService } from '@nestjs/config';
 import { UserEntity } from '@server/user/entities/User.entity';
@@ -230,6 +230,8 @@ export class AuthService {
     const host = this.configService.get('API_HOST');
     const port = this.configService.get('API_PORT');
 
-    return `${protocol}://${host}${environment === 'production' ? '' : `:${port}`}`;
+    return `${protocol}://${host}${
+      environment === 'production' ? '' : `:${port}`
+    }`;
   }
 }
