@@ -10,7 +10,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: configService.get('GOOGLE_CLIENT_ID'),
       clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
-      callbackURL: `${configService.get('API_PROTOCOL')}://${configService.get('API_HOST')}${
+      callbackURL: `${configService.get('API_PROTOCOL')}://${configService.get(
+        'API_HOST',
+      )}${
         configService.get('NODE_ENV') === 'production'
           ? ''
           : `:${configService.get('API_PORT')}`
