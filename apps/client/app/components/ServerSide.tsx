@@ -1,6 +1,20 @@
+import { ProcedureEntity } from "@server/procedure/entities/Procedure.entity";
+import { API_PROCEDURES_URL } from "@client/common/constants";
+
 export const ServerSide = async () => {
-  const response = await fetch("http://localhost:5000/api").then((res) =>
-    res.text(),
+  const procedures: ProcedureEntity[] = await fetch(API_PROCEDURES_URL).then(
+    (res) => res.json(),
   );
-  return <h1>{response}</h1>;
+  return (
+    <section>
+      <h2>Server side requested data</h2>
+      <ul>
+        {procedures.map((procedure) => (
+          <li key={procedure.id}>
+            {procedure.name} : {procedure.price}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
 };

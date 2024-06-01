@@ -10,8 +10,8 @@ import { GUARDS } from '@server/auth/guards';
 import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TokenEntity } from '@server/auth/entities/token.entity';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from '@server/auth/guards/jwt-auth.guard';
+/*import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from '@server/auth/guards/jwt-auth.guard';*/
 
 @Module({
   imports: [
@@ -23,10 +23,10 @@ import { JwtAuthGuard } from '@server/auth/guards/jwt-auth.guard';
   ],
   controllers: [AuthController],
   providers: [
-    {
+    /*    {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
-    },
+    },*/
     AuthService,
     ...STRATEGIES,
     ...GUARDS,
