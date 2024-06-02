@@ -9,10 +9,19 @@ export default async function ReceptionsTimes({
   let url = API_RECEPTIONS_URL;
   const { slug } = params;
 
-  if (slug.length === 1) {
+  if (!slug) {
+    return (
+      <>
+        <h1>ReceptionsTimes</h1>
+        <p>No data</p>
+      </>
+    );
+  }
+
+  if (slug?.length === 1) {
     url += `?date=${slug[0]}`;
   }
-  if (slug.length === 2) {
+  if (slug?.length === 2) {
     url += `?date=${slug[0]}&timeInterval=${slug[1]}`;
   }
   console.log({ url });
