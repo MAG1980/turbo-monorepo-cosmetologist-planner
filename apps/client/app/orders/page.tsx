@@ -2,6 +2,7 @@ import { API_ORDERS_URL } from "@client/common/constants";
 import { log } from "next/dist/server/typescript/utils";
 import { OrderEntity } from "@server/order/entities/Order.entity";
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: {
@@ -23,11 +24,15 @@ export default async function Orders() {
         <ul>
           {orders.items.map((order) => (
             <li key={order.id}>
-              {order.id}: {order.status}
+              <Link href={`/orders/${order.id}`}>
+                {order.id}: {order.status}
+              </Link>
               <ul>
                 {order.procedures.map((procedure) => (
                   <li key={procedure.id}>
-                    {procedure.name}: {procedure.price}
+                    <Link href={`/procedures/${procedure.id}`}>
+                      {procedure.name}: {procedure.price}
+                    </Link>
                   </li>
                 ))}
               </ul>

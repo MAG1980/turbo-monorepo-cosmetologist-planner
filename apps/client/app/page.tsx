@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -6,6 +8,17 @@ export default function Home() {
           Cosmetologist Planner Home Page
         </h1>
       </div>
+      <ul className="font-bold text-2xl">
+        <li>
+          <Link href="/receptions">Receptions</Link>
+        </li>
+        <li>
+          <Link href="/orders">Orders</Link>
+        </li>
+        <li>
+          <Link href="/procedures">Procedures</Link>
+        </li>
+      </ul>
     </main>
   );
 }

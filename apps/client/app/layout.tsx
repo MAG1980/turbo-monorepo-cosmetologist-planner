@@ -5,6 +5,7 @@ import { ClientThemeProvider } from "@client/components/ClientThemeProvider";
 import { ClientLocalizationProvider } from "@client/components/ClientLocalizationProvider";
 import { Header } from "@client/components/Header";
 import { Footer } from "@client/components/Footer";
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,6 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <Link href="/">Home Page</Link>
         <ClientLocalizationProvider>
           <ClientThemeProvider>
             <Header />
