@@ -1,5 +1,10 @@
 import { API_RECEPTIONS_URL } from "@client/common/constants";
 import { ReceptionEntity } from "@server/reception/entities/Reception.entity";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Receptions",
+};
 
 export default async function AllReceptions() {
   const receptions: ReceptionEntity[] = await fetch(API_RECEPTIONS_URL)

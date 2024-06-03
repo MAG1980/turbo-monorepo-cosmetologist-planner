@@ -1,6 +1,14 @@
 import { API_ORDERS_URL } from "@client/common/constants";
 import { log } from "next/dist/server/typescript/utils";
 import { OrderEntity } from "@server/order/entities/Order.entity";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: {
+    //Определяет заголовок по умолчанию для дочерних сегментов. Он игнорирует title.template из родительских сегментов.
+    absolute: "Orders",
+  },
+};
 
 export default async function Orders() {
   const orders: { items: OrderEntity[] } | undefined = await fetch(
