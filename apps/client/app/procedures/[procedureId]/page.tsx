@@ -1,13 +1,26 @@
+import { Metadata } from "next";
 import { API_PROCEDURES_URL } from "@client/common/constants";
 import { ProcedureEntity } from "@server/procedure/entities/Procedure.entity";
 
-export default async function Procedure({
-  params,
-}: {
+type ProcedureProps = {
   params: {
     procedureId: string;
   };
-}) {
+};
+
+export async function generateMetadata({
+  params,
+}: ProcedureProps): Promise<Metadata> {
+  const url = `${API_PROCEDURES_URL}/${params.procedureId}`;
+  console.log({ url });
+  const procedure: ProcedureEntity | null = await fetch(url)
+    .then((res) => res.json())
+    .catch((error) => console.log(error));
+  return {
+    title: procedure?.name,
+  };
+}
+export default async function Procedure({ params }: ProcedureProps) {
   const url = `${API_PROCEDURES_URL}/${params.procedureId}`;
   console.log({ url });
   const procedure: ProcedureEntity | null = await fetch(url)
