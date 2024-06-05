@@ -5,7 +5,8 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "dotEnv": [".env.production.local"]
     },
     "start": {
       "dependsOn": ["^start"]
@@ -19,7 +20,7 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "dotEnv": [".env"]
+      "dotEnv": [".env.development.local"]
     },
     "mg:run": {
       "dependsOn": ["^mg:run"]
