@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function RootLayout({
   children,
 }: {
@@ -12,7 +14,7 @@ export default function RootLayout({
           textAlign: "center",
         }}
       >
-        Orders Nested Layout
+        <Link href="/orders">Orders Nested Layout</Link>
       </h2>
       {children}
     </section>
