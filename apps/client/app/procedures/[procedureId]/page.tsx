@@ -26,18 +26,17 @@ export default async function Procedure({ params }: ProcedureProps) {
   const procedure: ProcedureEntity | null = await fetch(url)
     .then((res) => res.json())
     .catch((error) => console.log(error));
+  if (!procedure?.id) {
+    throw new Error(`Procedure with id ${params.procedureId} not found`);
+  }
   return (
     <section>
-      {procedure?.id ? (
-        <div>
-          <h1>Procedure:</h1>
-          <p>id: {procedure.id}</p>
-          <p>name: {procedure.name}</p>
-          <p>price: {procedure.price}</p>
-        </div>
-      ) : (
-        <div>Procedure with id № {params.procedureId} not found</div>
-      )}
+      <div>
+        <h1>Procedure:</h1>
+        <p>id: {procedure?.id}</p>
+        <p>name: {procedure?.name}</p>
+        <p>price: {procedure?.price}</p>
+      </div>
     </section>
   );
 }
