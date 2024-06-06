@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ClientThemeProvider } from "@client/components/ClientThemeProvider";
-import { ClientLocalizationProvider } from "@client/components/ClientLocalizationProvider";
+import {
+  ClientThemeProvider,
+  ClientLocalizationProvider,
+  AuthContextProvider,
+} from "@client/components/providers";
 import { Header } from "@client/components/Header";
 import { Footer } from "@client/components/Footer";
 import Link from "next/link";
@@ -35,9 +38,11 @@ export default function RootLayout({
         <Link href="/">Home Page</Link>
         <ClientLocalizationProvider>
           <ClientThemeProvider>
-            <Header />
-            {children}
-            <Footer />
+            <AuthContextProvider>
+              <Header />
+              {children}
+              <Footer />
+            </AuthContextProvider>
           </ClientThemeProvider>
         </ClientLocalizationProvider>
       </body>
