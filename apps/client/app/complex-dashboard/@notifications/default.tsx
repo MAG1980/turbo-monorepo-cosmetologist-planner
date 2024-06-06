@@ -1,10 +1,10 @@
 import { Card } from "@client/components/card";
 import Link from "next/link";
 
-export default function Notifications() {
+export default function DefaultNotifications() {
   return (
     <Card>
-      <h1 className="text-center">Notifications</h1>
+      <h1 className="text-center">Default Notifications</h1>
 
       <Link
         className="block text-center text-blue-500"

@@ -5,6 +5,7 @@ export const Card = ({ children }: { children: React.ReactNode }) => {
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
     border: " 1px solid #ddd",
     display: "flex",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
   };

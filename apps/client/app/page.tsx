@@ -18,6 +18,9 @@ export default function Home() {
         <li>
           <Link href="/procedures">Procedures</Link>
         </li>
+        <li>
+          <Link href="/complex-dashboard">Complex Dashboard</Link>
+        </li>
       </ul>
     </main>
   );
