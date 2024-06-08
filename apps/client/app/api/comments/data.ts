@@ -1,4 +1,8 @@
-export const comments = [
+export type Comment = {
+  id: number;
+  text: string;
+};
+export const comments: Comment[] = [
   {
     id: 1,
     text: "This is the first comment",
