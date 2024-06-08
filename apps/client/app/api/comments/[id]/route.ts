@@ -1,4 +1,5 @@
 import { comments } from "@client/app/api/comments/data";
+import { Request } from "next/dist/compiled/@edge-runtime/primitives";
 
 export function GET(_request: Request, { params }: { params: { id: string } }) {
   console.log("id", params.id);
@@ -30,5 +31,21 @@ export async function PATCH(
       "Content-Type": "application/json",
     },
     status: 200,
+  });
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } },
+) {
+  const index = comments.findIndex(
+    (comment) => comment.id === parseInt(params.id),
+  );
+  if (index === -1) {
+    return new Response("Comment not found", { status: 404 });
+  }
+  comments.splice(index, 1);
+  return new Response(null, {
+    status: 204,
   });
 }
