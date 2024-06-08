@@ -6,5 +6,9 @@ export function GET(request: NextRequest) {
   console.log({ authorizationHeader });
   const headersList = headers();
   console.log({ authorization: headersList.get("authorization") });
-  return new Response(JSON.stringify({ name: "John Doe" }));
+  return new Response("<h1>Profile API Data</h1>", {
+    headers: {
+      "Content-Type": "text/html",
+    },
+  });
 }
