@@ -10,6 +10,7 @@ GET http://localhost:3000/api/comments?query=first
 Accept: application/json
 
 ###
+# @no-cookie-jar
 GET http://localhost:3000/api/profile
 Accept: application/json
 Authorization: Bearer 12345
