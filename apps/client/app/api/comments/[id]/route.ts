@@ -1,8 +1,11 @@
 import { comments } from "@client/app/api/comments/data";
 import { Request } from "next/dist/compiled/@edge-runtime/primitives";
+import { redirect } from "next/navigation";
 
 export function GET(_request: Request, { params }: { params: { id: string } }) {
-  console.log("id", params.id);
+  if (parseInt(params.id) > comments.length) {
+    return redirect("/api/comments");
+  }
   const comment = comments.find(
     (comment) => comment.id === parseInt(params.id),
   );
