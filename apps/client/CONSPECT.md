@@ -218,6 +218,61 @@ app/@children/page.js
    соответствующие папке, расположенной на два уровня выше в иерархии папок.
 4) Если добавить к названию папки перехватываемого сегмента (...), то она будет перехватывать сегменты маршрута,
    соответствующие корневой папке приложения (/app).
+5) 
+
+#### Route Handlers - бработчики маршрутов
+бработчики маршрутов позволяют создавать пользовательские обработчики запросов для заданного маршрута,
+используя веб-API для запроса и ответа.
+Обработчики маршрутов доступны только внутри app каталога.
+Они эквивалентны маршрутам API внутри pages каталога.
+Это означает, что вам не нужно использовать маршруты API и обработчики маршрутов вместе.
+
+Соглашение:
+Обработчики маршрутов определяются в route.js|ts файле внутри app.
+Не может быть route.js файла на том же уровне сегмента маршрута, что и page.js (page.js будет проигнорирован).
+Обработчики маршрутов должны экспортировать асинхронные функции с названиями,
+соответствующими HTTP-методам GET, POST, PUT, PATCH DELETE, HEAD OPTIONS.
+
+Поддерживаются следующие HTTP-методы: GET, POST, PUT, PATCH DELETE, HEAD OPTIONS.
+Если вызывается неподдерживаемый метод, Next.js вернет 405 Method Not Allowed ответ.
+
+Расширенные NextRequest и NextResponse API
+В дополнение к поддержке нативных Request и Response Next.js расширяет их с помощью NextRequest и NextResponse,
+предоставляя удобные помощники для продвинутых вариантов использования.
+
+Обработчики маршрутов кэшируются по умолчанию при использовании GET метода с Response объектом.
+Кэширование можно отключать.
+Можно задавать время ревалидации данных, экспортировав константу revalidate из файла page.tsx или route.tsx:
+//layout.js | page.js
+export const revalidate = 3600
+
+Значение cookie можно устанавливать и читать с помощью cookies from next/headers.
+Эта серверная функция может быть вызвана непосредственно в обработчике маршрутов или вложена внутрь другой функции.
+const cookieStore = cookies()
+const token = cookieStore.get('token')
+
+Для чтения файлов cookie из запроса можно использовать тип NextRequest.
+import { type NextRequest } from 'next/server'
+export async function GET(request: NextRequest) {
+const token = request.cookies.get('token')
+}
+
+Также доступны чтение и установка заголовков, а также перенаправления:
+import { headers } from 'next/headers'
+export async function GET(request: Request) {
+const headersList = headers()
+const referer = headersList.get('referer')
+return new Response('Hello, Next.js!', {
+status: 200,
+headers: { referer: referer },
+})
+}
+
+import { redirect } from 'next/navigation'
+
+export async function GET(request: Request) {
+redirect('https://nextjs.org/')
+}
 
 # TurboRepo
 
